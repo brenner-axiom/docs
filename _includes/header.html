@@ -1,0 +1,16 @@
+<header class="site-header">
+  <div class="header-inner">
+    <a href="{{ '/' | relative_url }}" class="site-logo">
+      <span class="hash">#</span>B4mad
+      <span class="status-dot"></span>
+    </a>
+    <button class="nav-toggle" onclick="document.querySelector('.site-nav').classList.toggle('open')" aria-label="Menu">☰</button>
+    <nav class="site-nav">
+      <a href="{{ '/' | relative_url }}" {% if page.url == '/' %}class="active"{% endif %}>Home</a>
+      <a href="{{ '/research/' | relative_url }}" {% if page.url contains '/research' %}class="active"{% endif %}>Research</a>
+      <a href="{{ '/playbooks/' | relative_url }}" {% if page.url contains '/playbooks' %}class="active"{% endif %}>Playbooks</a>
+      <a href="{{ '/agents/' | relative_url }}" {% if page.url contains '/agents' %}class="active"{% endif %}>Agents</a>
+      <a href="{{ '/about' | relative_url }}" {% if page.url contains '/about' %}class="active"{% endif %}>About</a>
+    </nav>
+  </div>
+</header>
