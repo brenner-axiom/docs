@@ -17,3 +17,4 @@ Research output from Roman "Romanov" Research-Rachmaninov and the #B4mad researc
 | 2026-02-19 | [Sandboxed Tool Execution for Open Models](2026-02-19-sandboxed-tool-execution.html) | Romanov |
 | 2026-02-19 | [LOOPY Sustainability Model](2026-02-19-loopy-sustainability-model.html) | Romanov |
 | 2026-02-19 | [Open Licensing Strategy](2026-02-19-open-licensing-strategy.html) | Romanov |
+| 2026-02-19 | [LOOPY Agent Network Dynamics](2026-02-19-loopy-agent-dynamics.html) | Romanov |
