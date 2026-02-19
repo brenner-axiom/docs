@@ -54,7 +54,7 @@ description: "#B4mad Agent Fleet metrics dashboard with aviation theme"
   position: relative;
 }
 .stats-bar::before {
-  content: 'CUMULATIVE OPS';
+  content: 'LAST 24 HOURS — OPS SUMMARY';
   position: absolute;
   top: -0.6rem;
   left: 1.5rem;
@@ -278,7 +278,7 @@ description: "#B4mad Agent Fleet metrics dashboard with aviation theme"
   <div class="radar-container"><div class="radar-sweep"></div></div>
   <h1>✈ Fleet Status</h1>
   <div class="subtitle">#B4mad Air Operations Center</div>
-  <div class="status-line"><span class="blink">▮</span> ALL SYSTEMS NOMINAL — DEFCON 5 — 19 FEB 2026 22:44Z</div>
+  <div class="status-line"><span class="blink">▮</span> ALL SYSTEMS NOMINAL — LAST 24H OPS SUMMARY — 19 FEB 2026</div>
 </div>
 
 <!-- Cumulative Stats -->
@@ -572,6 +572,6 @@ description: "#B4mad Agent Fleet metrics dashboard with aviation theme"
 
 <div style="text-align: center; margin-top: 2rem;">
   <p style="font-family: 'JetBrains Mono', monospace; font-size: 0.65rem; color: var(--text-muted); letter-spacing: 0.15em;">
-    DATA EPOCH: 19 FEB 2026 · REFRESH: MANUAL / <code>scripts/update-fleet-stats.sh</code> · RTB = RETURNED TO BASE
+    DATA WINDOW: LAST 24 HOURS · UPDATED: 19 FEB 2026 22:44Z · REFRESH: <code>scripts/update-fleet-stats.sh</code> · RTB = RETURNED TO BASE
   </p>
 </div>

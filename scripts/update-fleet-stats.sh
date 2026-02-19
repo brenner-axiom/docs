@@ -19,35 +19,41 @@ fi
 cd "$BEADS_HUB"
 git pull -q 2>/dev/null || true
 
+# --- 24-hour rolling window ---
+CUTOFF=$(date -u -d '24 hours ago' '+%Y-%m-%dT%H:%M:%S' 2>/dev/null || date -u -v-24H '+%Y-%m-%dT%H:%M:%S')
+NOW_UTC=$(date -u '+%d %b %Y %H:%MZ' | tr '[:lower:]' '[:upper:]')
+
+# Collect bead files modified in the last 24 hours
+RECENT_BEADS=$(find beads/ -name "*.md" -newermt "$CUTOFF" 2>/dev/null || find beads/ -name "*.md" -mtime -1 2>/dev/null)
+
 echo "{"
 echo "  \"generated\": \"$(date -u '+%Y-%m-%dT%H:%M:%SZ')\","
+echo "  \"window\": \"last_24h\","
+echo "  \"cutoff\": \"$CUTOFF\","
 
-# Count beads by status
-TOTAL=$(find beads/ -name "*.md" 2>/dev/null | wc -l)
-CLOSED=$(grep -rl 'status: closed' beads/ 2>/dev/null | wc -l)
-OPEN=$(grep -rl 'status: open' beads/ 2>/dev/null | wc -l)
-IN_PROGRESS=$(grep -rl 'status: in_progress' beads/ 2>/dev/null | wc -l)
+# Count beads by status (last 24h only)
+TOTAL=$(echo "$RECENT_BEADS" | grep -c . || echo 0)
+CLOSED=$(echo "$RECENT_BEADS" | xargs grep -l 'status: closed' 2>/dev/null | wc -l)
+OPEN=$(echo "$RECENT_BEADS" | xargs grep -l 'status: open' 2>/dev/null | wc -l)
+IN_PROGRESS=$(echo "$RECENT_BEADS" | xargs grep -l 'status: in_progress' 2>/dev/null | wc -l)
 
-echo "  \"beads\": {"
+echo "  \"beads_24h\": {"
 echo "    \"total\": $TOTAL,"
 echo "    \"closed\": $CLOSED,"
 echo "    \"open\": $OPEN,"
 echo "    \"in_progress\": $IN_PROGRESS"
 echo "  },"
 
-# Count today's closed beads (distance flown today)
-TODAY=$(date -u '+%Y-%m-%d')
-TODAY_CLOSED=$(grep -rl 'status: closed' beads/ 2>/dev/null | xargs grep -l "$TODAY" 2>/dev/null | wc -l)
-
-echo "  \"today\": {"
-echo "    \"date\": \"$TODAY\","
-echo "    \"distance_flown_nm\": $TODAY_CLOSED"
+# Distance flown = closed beads in window
+echo "  \"window_stats\": {"
+echo "    \"distance_flown_nm\": $CLOSED,"
+echo "    \"updated\": \"$NOW_UTC\""
 echo "  },"
 
-# Recent closed beads as flight log entries
+# Recent closed beads as flight log entries (last 24h only)
 echo "  \"flight_log\": ["
 FIRST=true
-grep -rl 'status: closed' beads/ 2>/dev/null | head -10 | while read -r f; do
+echo "$RECENT_BEADS" | xargs grep -l 'status: closed' 2>/dev/null | head -10 | while read -r f; do
   TITLE=$(grep '^title:' "$f" 2>/dev/null | head -1 | sed 's/^title: *//' | sed 's/"//g')
   ID=$(basename "$f" .md)
   if [ "$FIRST" = true ]; then
