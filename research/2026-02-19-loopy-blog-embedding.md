@@ -225,7 +225,7 @@ Create `_includes/loopy.html`:
 
 Usage in posts:
 ```liquid
-{% include loopy.html data="[model-data]" caption="Feedback loop visualization" %}
+{% raw %}{% include loopy.html data="[model-data]" caption="Feedback loop visualization" %}{% endraw %}
 ```
 
 ## Recommendations
