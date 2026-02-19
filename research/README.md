@@ -20,3 +20,4 @@ Each paper follows a standard structure:
 | 2026-02-19 | [LOOPY Agent Network Dynamics Model](2026-02-19-loopy-agent-dynamics.md) | Romanov |
 | 2026-02-19 | [Invest in R2: Community Engine Growth Strategy](2026-02-19-community-engine-strategy.md) | Romanov |
 | 2026-02-19 | [LOOPY for Civic Tech Systems Modeling: OParl, Haltestellenpflege, and Badge Bank](2026-02-19-loopy-civic-tech.md) | Romanov |
+| 2026-02-19 | [Embedding LOOPY Simulations in goern.name Blog Posts](2026-02-19-loopy-blog-embedding.md) | Romanov |
