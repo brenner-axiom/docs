@@ -1,0 +1,806 @@
+---
+layout: null
+---
+# #B4mad Industries — Full Content
+
+This file contains all research papers and playbooks for LLM ingestion.
+
+---
+
+## Source: research/2026-02-19-dao-governance-b4mad.md
+
+
+## 1. Context: Why a DAO for #B4mad?
+
+#B4mad Industries operates as an agent-first organization where AI agents (Brenner, CodeMonkey, PltOps, Romanov) execute work alongside human contributors. This creates a natural demand for:
+
+1. **Transparent resource allocation** — treasury decisions traceable on-chain
+2. **Agent identity and authorization** — agents need on-chain identities to interact with DeFi, sign transactions, and participate in governance
+3. **Contributor governance** — a lightweight mechanism for human and agent stakeholders to propose and vote on organizational direction
+4. **Payment automation** — programmatic compensation for agent-executed work
+
+A DAO is not a branding exercise here. It is infrastructure: the organizational primitive that lets agents and humans coordinate with shared rules and shared capital.
+
+---
+
+## 2. State of the Art: DAO Frameworks in 2026
+
+### 2.1 Aragon OSx
+
+**Aragon** (founded 2017) is the most mature DAO framework, governing $35B+ in assets across 10K+ projects. Aragon OSx (the current generation) is:
+
+- **Modular by design** — plugins for voting, token gating, multisig, and custom logic can be added/removed without redeployment
+- **Multi-chain** — deployed on Ethereum mainnet, Arbitrum, Base, Polygon, and others
+- **No-code + pro-code** — a web app for simple DAOs, plus a full Solidity plugin SDK for custom governance
+- **Audited and battle-tested** — multiple security audits, years of production use
+
+Aragon OSx uses a core `DAO.sol` contract that delegates functionality to plugins via a permission system. This is architecturally clean: the DAO itself is a treasury + permission manager, and governance logic is swappable.
+
+**Base L2 support:** Aragon OSx is deployed on Base. This is a first-class deployment, not a community fork.
+
+### 2.2 OpenZeppelin Governor
+
+OpenZeppelin's Governor is the **reference implementation** for on-chain governance in the Ethereum ecosystem. It is:
+
+- **Maximally composable** — built from Solidity inheritance mixins (voting strategies, timelocks, quorum calculations)
+- **Gas-efficient** — minimal storage, optimized for L2s (with optional `GovernorStorage` for calldata optimization)
+- **Compound-compatible** — designed to interoperate with GovernorAlpha/Bravo ecosystems
+- **Widely supported** — first-class integration with Tally, Snapshot, and other governance UIs
+
+Governor is lower-level than Aragon: you compose your own governance contract from mixins. This gives maximum control but requires more Solidity expertise. For #B4mad, this is the **fallback option** if Aragon's plugin system proves too opinionated.
+
+### 2.3 Syndicate
+
+Syndicate has pivoted from DAO tooling to L2 infrastructure ("infinitely scale Ethereum"). While historically relevant for investment DAOs and on-chain clubs, their current focus is chain infrastructure and staking (SYND token). **Not recommended** as a DAO framework for #B4mad — the product direction has diverged.
+
+### 2.4 Other Notable Platforms
+
+| Platform | Strength | Limitation |
+|---|---|---|
+| **Moloch v3 (DAOhaus)** | Ragequit mechanism, grant DAOs | Less flexible governance models |
+| **Nouns Builder (Zora)** | NFT-based governance, Nouns-style auctions | Narrow use case |
+| **Hats Protocol** | Role-based access, composable authorities | Complementary, not standalone |
+| **Safe (Gnosis)** | Best-in-class multisig | Not a full DAO — no proposals/voting |
+
+### 2.5 From-Scratch Implementation
+
+Building a DAO from scratch means writing custom Solidity (or Vyper) governance contracts. This is **almost never justified** in 2026:
+
+- OpenZeppelin Governor and Aragon OSx are audited, gas-optimized, and battle-tested
+- Custom governance has a terrible security track record (The DAO hack of 2016, Beanstalk flash loan governance attack of 2022)
+- Maintenance burden is permanent — every EVM upgrade, every new standard, every security advisory requires attention
+- **Verdict:** From-scratch is only warranted for genuinely novel governance mechanisms. #B4mad's needs are well within framework capabilities.
+
+---
+
+## 3. Tooling: Python vs. TypeScript
+
+The bead specifically asks about Python vs. TypeScript for DAO tooling. The answer is clear but nuanced.
+
+### 3.1 TypeScript: The Ecosystem Winner
+
+The Ethereum tooling ecosystem has consolidated around TypeScript:
+
+- **Viem + Wagmi** — the modern TypeScript stack for EVM interaction (replaced ethers.js/web3.js as the default)
+- **Hardhat / Foundry** — contract development (Foundry is Rust-based but TypeScript-integrated for testing/scripting)
+- **Aragon SDK** — TypeScript-first, no Python SDK
+- **OpenZeppelin Wizard** — generates Solidity with TypeScript deploy scripts
+- **Thirdweb, Alchemy SDK, Syndicate SDK** — all TypeScript-first
+
+Every major DAO framework provides TypeScript SDKs as the primary integration path. Python SDKs, where they exist, are community-maintained and lag behind.
+
+### 3.2 Python: The Agent Language
+
+Python dominates AI/ML and is the language of most agent frameworks (LangChain, CrewAI, OpenClaw itself). For #B4mad's agent-first architecture, Python is where the agents live.
+
+- **web3.py** — mature but slower to adopt new standards than viem
+- **Ape Framework** — Python-native smart contract development (viable but smaller community)
+- **Brownie** — effectively deprecated in favor of Ape/Foundry
+
+### 3.3 Recommendation: TypeScript for On-Chain, Python for Agent Logic
+
+Use **TypeScript** for:
+- Smart contract deployment and upgrades
+- DAO administration scripts
+- Frontend/governance UI (if building custom)
+- Direct SDK integration with Aragon OSx
+
+Use **Python** for:
+- Agent-to-chain interaction (web3.py for transaction construction)
+- Off-chain governance logic (proposal drafting, quorum monitoring)
+- Integration with agent orchestration (OpenClaw, MCP tools)
+
+This is not a compromise — it's the natural architecture. The on-chain layer speaks TypeScript because that's where the tooling is. The agent layer speaks Python because that's where the intelligence is. A thin JSON-RPC bridge connects them.
+
+---
+
+## 4. Agent On-Chain Identity: EIP-8004
+
+EIP-8004 ("Trustless Agents") is a **draft ERC** (created 2025-08-13) that directly addresses a core #B4mad requirement: how do AI agents get discoverable, trustworthy on-chain identities?
+
+### 4.1 The Three Registries
+
+EIP-8004 proposes three singleton contracts (deployable on any L2):
+
+1. **Identity Registry** — ERC-721-based agent registration. Each agent gets an NFT (the `agentId`) whose `tokenURI` resolves to a registration file describing the agent's capabilities, endpoints (A2A, MCP, web, ENS, DID), and supported trust models.
+
+2. **Reputation Registry** — A standard interface for posting/fetching feedback on agents. Scoring can happen on-chain (for composability) or off-chain (for sophisticated algorithms).
+
+3. **Validation Registry** — Hooks for independent verification (staked re-execution, zkML proofs, TEE attestations).
+
+### 4.2 Why This Matters for #B4mad
+
+Currently, #B4mad agents (Brenner, CodeMonkey, PltOps, Romanov) have no on-chain presence. They operate through goern's accounts and keys. EIP-8004 offers a path to:
+
+- **Agent-owned wallets** — each agent gets an ERC-721 identity token, owned by the DAO's multisig or governance contract
+- **Discoverable capabilities** — the registration file advertises MCP endpoints, A2A agent cards, and supported protocols
+- **Delegated authority** — the DAO can grant agents spending limits, voting weight, or proposal rights via on-chain permissions
+- **Reputation accrual** — agent work quality becomes verifiable and portable
+
+### 4.3 Integration with x402
+
+x402 is an open standard for HTTP-native payments using stablecoins. When an HTTP request arrives without payment, the server responds with HTTP 402, prompting the client to pay and retry. This is directly complementary to EIP-8004:
+
+- An agent registered via EIP-8004 can **pay for services** using x402 (no API keys, no accounts, no KYC)
+- An agent can **charge for services** by adding x402 middleware to its endpoints
+- The DAO treasury funds agent wallets; agents spend autonomously within policy limits
+
+For #B4mad, this means agents could autonomously purchase compute, API access, or data — and sell their own services — with the DAO treasury as the funding source and governance as the policy layer.
+
+---
+
+## 5. Recommended Architecture for #B4mad
+
+Based on the analysis above, we recommend the following architecture:
+
+### 5.1 Phase 1: Foundation (Weeks 1–4)
+
+1. **Deploy Aragon OSx DAO on Base** using the Aragon App (no-code)
+   - Token-weighted voting plugin (ERC-20 governance token)
+   - Multisig plugin for emergency actions (goern + 2 trusted signers)
+   - Treasury controlled by governance
+
+2. **Create a governance token** (e.g., `$B4MAD`)
+   - Initial distribution: founder allocation + contributor pool + agent pool
+   - Vesting schedules for long-term alignment
+
+3. **Establish a Safe multisig** as the DAO's execution layer for time-sensitive decisions
+
+### 5.2 Phase 2: Agent Integration (Weeks 5–8)
+
+4. **Register agents via EIP-8004** (when the standard stabilizes, or use a local fork of the registry contracts)
+   - Each agent (Brenner, CodeMonkey, PltOps, Romanov) gets an identity NFT
+   - Registration files advertise MCP endpoints and capabilities
+
+5. **Agent wallets on Base** — each agent gets a smart contract wallet (Safe or ERC-4337 account abstraction) owned by the DAO
+   - Spending policies enforced on-chain (daily limits, approved contract interactions)
+   - Agents can sign transactions for their authorized scope
+
+6. **x402 integration** for agent-to-agent and agent-to-service payments
+
+### 5.3 Phase 3: Governance Maturation (Months 3–6)
+
+7. **Delegation framework** — agents can be delegated voting power for routine operational decisions
+8. **Proposal templates** — standardized proposal types (budget allocation, agent authorization, parameter changes)
+9. **Off-chain voting via Snapshot** for gas-free signal voting, with on-chain execution for binding decisions
+10. **Reputation system** — track agent performance on-chain via EIP-8004 Reputation Registry
+
+### 5.4 Architecture Diagram
+
+```
+┌─────────────────────────────────────────────────┐
+│                  Base L2                         │
+│                                                  │
+│  ┌──────────────┐   ┌─────────────────────────┐ │
+│  │ Aragon OSx   │   │ EIP-8004 Registries     │ │
+│  │ DAO Core     │   │ ┌─────────┐ ┌────────┐  │ │
+│  │ ┌──────────┐ │   │ │Identity │ │Reputa- │  │ │
+│  │ │Treasury  │ │   │ │Registry │ │tion    │  │ │
+│  │ └──────────┘ │   │ └─────────┘ └────────┘  │ │
+│  │ ┌──────────┐ │   └─────────────────────────┘ │
+│  │ │Voting    │ │                                │
+│  │ │Plugin    │ │   ┌─────────────────────────┐ │
+│  │ └──────────┘ │   │ Agent Wallets (AA/Safe) │ │
+│  │ ┌──────────┐ │   │ Brenner | CodeMonkey    │ │
+│  │ │Multisig  │ │   │ PltOps  | Romanov       │ │
+│  │ │Plugin    │ │   └─────────────────────────┘ │
+│  └──────────────┘                                │
+└─────────────────────────────────────────────────┘
+         │                        │
+         │ Governance             │ x402 Payments
+         ▼                        ▼
+┌─────────────────┐  ┌──────────────────────────┐
+│ Snapshot (off-   │  │ External Services        │
+│ chain signaling) │  │ (APIs, compute, data)    │
+└─────────────────┘  └──────────────────────────┘
+```
+
+---
+
+## 6. Rationale: Why This Stack?
+
+| Decision | Rationale |
+|---|---|
+| **Base L2** over mainnet | Low gas costs (~$0.01/tx), Coinbase ecosystem, strong DeFi liquidity, EIP-8004 deployable |
+| **Aragon OSx** over OZ Governor | Plugin modularity means we can swap governance logic without redeployment; no-code bootstrap; audited |
+| **TypeScript** for on-chain tooling | Aragon SDK is TS-first; viem is the modern standard; largest contributor pool |
+| **Python** for agent integration | Agent frameworks are Python; web3.py is mature enough for tx construction |
+| **EIP-8004** for agent identity | Purpose-built for agent economies; NFT-based identity is composable with existing infra |
+| **x402** for payments | HTTP-native, zero-friction, built for agents; eliminates API key management |
+| **Safe multisig** as backstop | Industry standard; emergency override for governance failures |
+
+### 6.1 Why Not From Scratch?
+
+The cost-benefit is unambiguous. Aragon OSx has:
+- 8 years of development history
+- Multiple independent security audits
+- $35B+ in governed assets (proving the security model at scale)
+- Active maintenance and upgrade path
+
+Building from scratch would consume months of development time, require a dedicated security audit ($50K–$200K), and produce a less capable result. The only scenario justifying from-scratch is if #B4mad needs a governance mechanism that no existing framework can express — and we have identified no such requirement.
+
+### 6.2 Risk Factors
+
+1. **EIP-8004 is a draft** — the standard may change significantly. Mitigation: deploy a local fork of the registries, migrate when the ERC is finalized.
+2. **Agent key management** — if an agent's private key is compromised, funds could be drained. Mitigation: smart contract wallets with spending limits and time-delayed large transfers.
+3. **Voter apathy** — small DAOs often struggle with quorum. Mitigation: low initial quorum (10–15%), delegation to active participants, Snapshot for gas-free signaling.
+4. **Regulatory uncertainty** — DAO governance tokens may be classified as securities in some jurisdictions. Mitigation: utility-focused token design, legal counsel before public distribution.
+
+---
+
+## 7. Recommendations
+
+1. **Start with Aragon OSx on Base** — deploy a minimal DAO with token voting and multisig plugins within the next sprint.
+2. **Use TypeScript for deployment and administration** — leverage the Aragon SDK and viem for all on-chain operations.
+3. **Prototype EIP-8004 agent registration** — deploy a local Identity Registry on Base testnet and register one agent (Brenner) as proof of concept.
+4. **Integrate x402 for one agent service** — pick a single agent capability and put it behind x402 payment middleware as a demonstration.
+5. **Do not build governance from scratch** — the frameworks are good enough, and the security risk of custom governance is not worth it.
+6. **Plan for progressive decentralization** — start with multisig-heavy governance, gradually shift authority to token voting as the contributor base grows.
+
+---
+
+## References
+
+1. Aragon OSx Documentation — https://devs.aragon.org/
+2. OpenZeppelin Governor — https://docs.openzeppelin.com/contracts/5.x/governance
+3. EIP-8004: Trustless Agents (Draft) — https://eips.ethereum.org/EIPS/eip-8004
+4. x402: Payment Required — https://www.x402.org/
+5. Syndicate — https://syndicate.io/
+6. Viem Documentation — https://viem.sh/
+7. Safe (formerly Gnosis Safe) — https://safe.global/
+8. Snapshot — https://snapshot.org/
+9. Hats Protocol — https://www.hatsprotocol.xyz/
+10. DAOhaus (Moloch v3) — https://daohaus.club/
+
+---
+
+*Published by #B4mad Industries Research Division. For questions or feedback, contact goern.*
+
+---
+
+## Source: research/2026-02-19-finetuning-open-models-agent-workflows.md
+
+
+---
+
+## Source: research/2026-02-19-security-first-agents.md
+
+
+## 1. Context: Why This Matters Now
+
+The AI agent landscape in early 2026 is defined by a paradox. Model intelligence is scaling faster than anyone predicted — frontier models from Anthropic, Google, and a growing wave of Chinese labs are converging on comparable capability levels. As Sebastian Raschka observed on the Lex Fridman Podcast #490: "I don't think nowadays, in 2026, that there will be any company having access to a technology that no other company has access to" [1]. Intelligence is commoditizing.
+
+Yet agent *usefulness* remains bottlenecked. Not by what models can do, but by what we dare let them do.
+
+Lex Fridman stated the problem with characteristic clarity:
+
+> "The power of AI agents comes from: (1) intelligence of the underlying model, (2) how much access you give it to all your data, (3) how much freedom & power you give it to act on your behalf. I think for 2 & 3, security is the biggest problem." [2]
+
+This is precisely the thesis #B4mad Industries has been building toward — and building on — for the past year.
+
+---
+
+## 2. The Access–Risk–Usefulness Triangle
+
+Fridman's framing implies a fundamental trade-off that we formalize as the **access–risk–usefulness triangle**:
+
+```
+        Usefulness
+           /\
+          /  \
+         /    \
+        /      \
+       /________\
+    Access --- Risk
+```
+
+- **Access** — the data, tools, credentials, and systems an agent can reach
+- **Risk** — the potential for harm: data exfiltration, unauthorized actions, credential theft, runaway operations
+- **Usefulness** — the value the agent delivers to the human
+
+The relationship is straightforward: **usefulness scales with access, but so does risk.** Most current agent deployments optimize one edge of this triangle at the expense of the others:
+
+| Approach | Access | Risk | Usefulness |
+|---|---|---|---|
+| Chatbot (no tools) | None | Minimal | Low |
+| YOLO mode (full access, no guardrails) | Maximum | Maximum | High (short-term) |
+| Security-first (scoped access, audit trails) | Controlled | Managed | High (sustainable) |
+
+The insight is that the triangle is not a zero-sum game. With the right architecture, you can push usefulness high while keeping risk managed — but only if security is a *first-class design concern*, not a bolt-on.
+
+---
+
+## 3. The YOLO Problem
+
+Fridman observes: "A lot of tech-savvy folks are in yolo mode right now and optimizing for [usefulness] over [the pain of cyber attacks, leaked data, etc]." [2]
+
+This is empirically true. The dominant pattern in 2026 agent usage is:
+
+1. **Give the agent everything.** Full filesystem access, unrestricted shell, API keys in environment variables, credentials in plaintext config files.
+2. **Hope for the best.** Trust the model not to do anything harmful. Trust the tool framework not to have exploitable surface area.
+3. **Move fast.** The productivity gains are real and immediate. Security concerns feel abstract and distant.
+
+Sebastian Raschka names the trust barrier directly in the podcast: "A lot of people don't use tool call modes because I think it's a trust thing. You don't want to run this on your computer where it has access to tools and could wipe your hard drive, so you want to containerize that" [1]. And on giving agents access to personal data: "I don't know if I would today give an LLM access to my emails, right?" [1].
+
+### Why YOLO Won't Scale
+
+YOLO mode works for individual developers comfortable with risk — the same demographic that runs `curl | sudo bash` and thinks SELinux is something you disable. It fails at every other scale:
+
+- **Enterprise adoption** requires auditability, compliance, and the ability to answer "what did the agent do and why?" Enterprises won't deploy agents that operate as black boxes with root access.
+- **Consumer trust** requires safety guarantees. Non-technical users will not (and should not) accept "the AI might leak your banking credentials, but it's really productive."
+- **Multi-agent systems** compound the problem exponentially. When agents spawn sub-agents, delegate tasks, and share context, a single misconfigured permission cascades through the entire fleet.
+- **Regulatory pressure** is building. The EU AI Act and similar frameworks will demand transparency and accountability for autonomous systems. YOLO architectures have no answer.
+
+The YOLO era is a phase, not a destination. The question is: what comes after?
+
+---
+
+## 4. State of the Art: How Others Are Approaching This
+
+### 4.1 Model Providers
+
+Anthropic, OpenAI, and Google have all introduced tool-use frameworks with varying levels of permission modeling. Anthropic's Model Context Protocol (MCP) provides a standardized interface for tool exposure, but permission enforcement remains largely client-side. OpenAI's function calling has no built-in sandboxing. These are plumbing standards, not security architectures.
+
+### 4.2 Agent Frameworks
+
+Most popular agent frameworks (LangChain, CrewAI, AutoGen) focus on orchestration and capability composition. Security, when addressed at all, is limited to:
+- API key management (environment variables, .env files)
+- Basic "human-in-the-loop" confirmation prompts
+- Retry logic and error handling
+
+None provide comprehensive audit trails, cryptographic secret management, or principled access control.
+
+### 4.3 Sandboxing Approaches
+
+Some progress exists in execution isolation:
+- **E2B** and similar services provide sandboxed cloud environments for code execution
+- **Docker-based isolation** is common but inconsistently applied
+- **WebAssembly sandboxes** are emerging for lightweight tool execution
+
+These address the *execution* problem but not the *data access* or *credential management* problems.
+
+### 4.4 The Gap
+
+No widely-adopted framework addresses the full security surface area: secrets management, tool allowlisting, memory transparency, audit trails, and scoped autonomy — as an integrated architecture rather than a collection of point solutions.
+
+This is the gap #B4mad fills.
+
+---
+
+## 5. #B4mad's Security-First Architecture
+
+#B4mad Industries has built and operates a security-first agent architecture that treats the access–risk–usefulness triangle as a solvable engineering problem. The core principle: **transparency is security.**
+
+### 5.1 GPG-Encrypted Secrets via Gopass
+
+Agent credentials are managed through [gopass](https://github.com/gopasspw/gopass), a GPG-encrypted password store:
+
+- Secrets are encrypted at rest using GPG keys
+- Access is scoped per agent — agents only see the secrets they need
+- Credential rotation and revocation use standard GPG key management
+- No plaintext API keys in environment variables or config files
+
+This is categorically different from the `.env` file approach that dominates the ecosystem. A compromised agent session cannot access secrets outside its GPG-scoped keyring.
+
+### 5.2 Allowlisted Tool Access
+
+Tools are not available by default. Each agent has an explicit allowlist of permitted tools, configured by policy:
+
+- Tool availability is declared and auditable
+- New tool access requires explicit configuration, not just a prompt
+- Dangerous operations (file deletion, network access, credential use) require distinct authorization
+
+This inverts the default. Instead of "the agent can do everything unless we block it," the model is "the agent can do nothing unless we permit it."
+
+### 5.3 Human-Readable Memory
+
+Agent memory is stored in plain markdown files in a git repository:
+
+- `memory/YYYY-MM-DD.md` — daily operational logs
+- `MEMORY.md` — curated long-term memory
+- `SOUL.md` — agent identity and values
+
+Any human can read, audit, or modify agent memory at any time. There are no opaque vector databases, no hidden embeddings, no black-box retrieval systems. The human can always answer: "What does my agent know? What has it remembered? What is it thinking?"
+
+This is a radical transparency choice. It sacrifices some retrieval efficiency for total auditability.
+
+### 5.4 Git-Backed Audit Trails
+
+Every agent action that modifies state is committed to a git repository:
+
+- All file changes are tracked with standard `git log`
+- Bead-based task tracking provides structured work histories
+- Sub-agent delegation is logged — who spawned whom, for what task, with what outcome
+- The entire history is immutable, signed, and reproducible
+
+A security auditor — or the agent's human — can reconstruct any sequence of agent actions from the git log alone.
+
+### 5.5 Containerized Execution
+
+Agent tool execution runs in sandboxed environments:
+
+- Shell commands execute in isolated containers
+- Network access is scoped and monitorable
+- File system access is bounded to the workspace
+- Destructive operations prefer `trash` over `rm` — recoverable beats irreversible
+
+### 5.6 The Autonomy Ladder
+
+#B4mad implements graduated autonomy:
+
+1. **Read-only** — agent can observe but not act (file reads, web fetches)
+2. **Workspace-scoped** — agent can modify files within its workspace
+3. **External with confirmation** — sending emails, posting publicly requires human approval
+4. **Full delegation** — only for well-scoped sub-agent tasks with bead-tracked accountability
+
+This is not a theoretical framework. It is the operational reality of the Brenner Axiom agent system, running daily, managing infrastructure, producing research, and coordinating sub-agents — all within auditable bounds.
+
+---
+
+## 6. Analysis: Security as Competitive Advantage
+
+### 6.1 The Differentiation Argument
+
+If intelligence is commoditizing — and the evidence strongly suggests it is — then the sustainable differentiator for agent platforms is not "smarter model" but "trustworthy agent." The platform that solves the security problem wins the enterprise market, the consumer market, and eventually the regulatory approval that gates both.
+
+### 6.2 The Compound Effect
+
+Security-first architecture creates compounding returns:
+
+- **Trust enables access.** When humans trust the agent's security model, they grant more data access → more usefulness.
+- **Auditability enables autonomy.** When every action is traceable, humans are comfortable granting more freedom → more usefulness.
+- **Transparency enables debugging.** When memory is human-readable, errors are caught faster → better reliability → more trust.
+
+This is a virtuous cycle. YOLO mode has no such cycle — it has a ticking clock until the first serious breach.
+
+### 6.3 The Multi-Agent Imperative
+
+As Nathan Lambert observes in the podcast, the future is "many agents for different tasks" [1]. #B4mad already operates this way: Brenner Axiom orchestrates, CodeMonkey writes code, PltOps manages infrastructure, Romanov does research. Each agent has scoped permissions, tracked tasks (beads), and auditable outputs.
+
+In a multi-agent world, security isn't optional — it's structural. Without it, agent-to-agent delegation becomes an unmanageable chain of trust. With it, you get a fleet that's more capable than any single agent and more accountable than any individual human operator.
+
+---
+
+## 7. Recommendations
+
+### For Agent Platform Builders
+
+1. **Make security a first-class API, not a configuration option.** Secrets management, tool allowlisting, and audit logging should be core primitives, not plugins.
+2. **Default to deny.** Agents should start with zero access and explicitly earn each permission.
+3. **Make memory inspectable.** If a human can't read what the agent knows, the agent shouldn't know it.
+4. **Log everything to an immutable store.** Git works. Append-only logs work. "Trust me" doesn't work.
+
+### For Agent Deployers
+
+1. **Stop using .env files for agent credentials.** Use GPG-encrypted secret stores (gopass, SOPS, Vault).
+2. **Containerize tool execution.** Your agent should not share a filesystem with your SSH keys.
+3. **Implement graduated autonomy.** Don't give full access on day one. Earn trust through verifiable behavior.
+4. **Track agent work with structured systems.** Beads, tickets, audit trails — pick one and use it.
+
+### For the AI Safety Community
+
+1. **Take near-term agent security as seriously as long-term alignment.** The "security is the bottleneck" framing is not a distraction from alignment — it is alignment's most immediate, most testable frontier.
+2. **Study real deployments, not toy examples.** The security challenges of production agent systems — credential management, multi-agent delegation, data access scoping — are concrete and solvable. Solve them.
+
+---
+
+## 8. Conclusion
+
+Lex Fridman called it: "Solving the AI agent security problem is the big blocker for broad adoption" [2]. We agree — and we've been building the solution.
+
+The agent security problem is not a side quest. It is THE differentiator. Not because security is inherently exciting, but because without it, agents cannot access the data and freedom they need to be useful. Intelligence without trust is a parlor trick. Intelligence with trust is a revolution.
+
+#B4mad's architecture — GPG-encrypted secrets, allowlisted tools, human-readable memory, git-backed audit trails, containerized execution, and graduated autonomy — is not a theoretical proposal. It is a running system, producing real work, managed by real agents, every day.
+
+You don't have to choose between usefulness and safety. You just have to build it right.
+
+---
+
+## References
+
+[1] Lex Fridman Podcast #490: "State of AI in 2026: LLMs, Coding, Scaling Laws, China, Agents, GPUs, AGI" — with Sebastian Raschka and Nathan Lambert. January 31, 2026. Transcript: https://lexfridman.com/ai-sota-2026-transcript
+
+[2] Lex Fridman (@lexfridman). X post, February 2026. https://x.com/lexfridman/status/2023573186496037044
+
+[3] gopass — The slightly more awesome standard unix password manager for teams. https://github.com/gopasspw/gopass
+
+[4] Anthropic Model Context Protocol (MCP). https://modelcontextprotocol.io/
+
+[5] Beads — Lightweight task tracking for AI agents. https://github.com/steveyegge/beads
+
+---
+
+*Published by #B4mad Industries. This paper reflects the views and architecture of the #B4mad agent network. We welcome discussion, critique, and collaboration.*
+
+---
+
+## Source: docs/research/2026-02-19-privacy-preserving-local-agents.md
+
+
+---
+
+## Source: docs/research/2026-02-19-pull-based-agent-scheduling.md
+
+
+---
+
+## Source: playbooks/playbook-autonomous-purchases-adb-bazos.md
+
+
+## 2. Architecture
+
+```
+┌─────────────────────────────────────────────────┐
+│                   AI Agent                       │
+│  (OpenClaw / Claude / any LLM orchestrator)     │
+├─────────────┬───────────────┬───────────────────┤
+│  Browser    │  ADB Bridge   │  Web Fetch        │
+│  Control    │  (USB/TCP)    │  (HTTP client)    │
+│             │               │                   │
+│  bazos.cz   │  Samsung SMS  │  zasilkovna.cz    │
+│  subdomain  │  app via UI   │  pickup points    │
+│  navigation │  automation   │  bank QR gen      │
+└─────────────┴───────────────┴───────────────────┘
+        │              │               │
+   Phone reveal   Read/Send SMS   Logistics &
+   Verification   Negotiation     Payment
+```
+
+### Components
+
+| Component | Role | Interface |
+|-----------|------|-----------|
+| **Browser** | Navigate Bazos listings, trigger phone reveal, enter verification codes | JS evaluation via browser control |
+| **ADB** | Read incoming SMS, compose and send outgoing SMS | `adb shell` commands (uiautomator, input, am) |
+| **Web Fetch** | Look up shipping/pickup info (Zásilkovna), generate payment QR | HTTP GET + parse |
+| **Agent LLM** | Orchestrate flow, negotiate with seller, make decisions | Prompt-based reasoning |
+| **Human** | Approve payment (final confirmation gate) | QR code presented for manual bank transfer |
+
+---
+
+## 3. Complete Purchase Flow
+
+### Phase 1: Get Seller Phone Number
+
+1. **Navigate** to listing on correct subdomain (e.g., `pc.bazos.cz`)
+2. **Trigger phone reveal:** `document.querySelector('.teldetail').click()`
+3. **Enter agent phone number** in overlay and submit
+4. **Read verification SMS** via ADB UI dump (see §4)
+5. **Enter verification code** in overlay → receive seller phone number
+
+### Phase 2: Initial Contact (SMS)
+
+6. **Compose SMS** via ADB to seller number
+7. **Send inquiry** — express interest, ask about shipping/availability
+8. **Monitor** for seller reply via ADB UI dumps
+
+### Phase 3: Negotiation
+
+9. **Read seller reply** — parse shipping terms, price confirmation
+10. **Send follow-up** — confirm price, request bank details and shipping info
+11. **Handle seller questions** — provide name, email, pickup point as needed
+
+### Phase 4: Logistics
+
+12. **Look up pickup point** (e.g., Zásilkovna) via web fetch
+13. **Send logistics details** to seller via SMS
+
+### Phase 5: Payment
+
+14. **Receive bank account** from seller (Czech format: `XXXXXXXXXX/BBBB`)
+15. **Convert to IBAN** and generate SPD payment QR code
+16. **Present QR to human** for approval and payment ← **HUMAN GATE**
+17. **Send payment confirmation SMS** to seller after human confirms
+
+---
+
+## 4. ADB Interaction Patterns
+
+### 4.1 Reading SMS (UI Dump Method)
+
+Samsung devices block `content://sms` queries and SQLite access without root. The reliable method is UI automation:
+
+```bash
+# Dump current UI state
+adb -s $DEVICE shell uiautomator dump /sdcard/ui.xml
+adb -s $DEVICE pull /sdcard/ui.xml /tmp/ui.xml
+
+# Extract all visible text
+grep -o 'text="[^"]*"' /tmp/ui.xml | grep -v 'text=""'
+```
+
+**To navigate to a specific SMS thread:**
+1. Open Messages app: `adb -s $DEVICE shell am start -n com.samsung.android.messaging/.ui.ConversationListActivity`
+2. Dump UI to find the target thread row
+3. Calculate tap coordinates from `bounds` attribute (center of bounding box)
+4. Tap: `adb -s $DEVICE shell input tap X Y`
+
+### 4.2 Sending SMS
+
+```bash
+# ALWAYS force-stop first to get clean compose window
+adb -s $DEVICE shell am force-stop com.samsung.android.messaging
+sleep 1
+
+# Open fresh compose to target number
+adb -s $DEVICE shell 'am start -a android.intent.action.SENDTO -d "smsto:+420XXXXXXXXX"'
+sleep 2
+
+# Type word-by-word (spaces are eaten by `input text`)
+for word in "Hello," "I" "am" "interested."; do
+  adb -s $DEVICE shell input text "$word"
+  adb -s $DEVICE shell input keyevent KEYCODE_SPACE
+done
+
+# Dismiss keyboard BEFORE tapping Send
+adb -s $DEVICE shell input keyevent KEYCODE_BACK
+sleep 1
+
+# Find Send button via UI dump, tap its bounds center
+adb -s $DEVICE shell uiautomator dump /sdcard/ui.xml
+# Parse for content-desc="Send", extract bounds, tap center
+adb -s $DEVICE shell input tap $SEND_X $SEND_Y
+```
+
+### 4.3 Verifying Send Success
+
+```bash
+adb -s $DEVICE shell uiautomator dump /sdcard/ui.xml
+# Check compose field — empty means sent
+grep 'editor_body' /tmp/ui.xml | grep -o 'text="[^"]*"'
+# text="" → success | text="..." → still in compose, retry
+```
+
+### 4.4 Coordinate Systems — Critical
+
+- **UI dump `bounds`** = touch coordinate space ← **USE THESE**
+- **Screenshot pixels** ≠ touch coordinates on Samsung
+- Check touch space: `adb shell wm size` (e.g., `1080x1920`)
+- **Never** derive tap coordinates from screenshot pixel positions
+
+---
+
+## 5. Bazos.cz Platform Specifics
+
+### Subdomain Scoping
+- Verification is **per-subdomain** — verifying on `www.bazos.cz` does NOT work for `pc.bazos.cz`
+- Always verify on the **same subdomain** as the listing
+- Codes expire quickly — complete the flow without navigating away
+
+### Phone Reveal DOM Selectors
+```javascript
+// Trigger overlay
+document.querySelector('.teldetail').click()
+
+// Enter phone/code
+document.querySelector('#overlaytel input[type=text]').value = 'VALUE'
+document.querySelector('#overlaytel button').click()
+
+// Read result
+document.querySelector('#overlaytel').innerText
+```
+
+---
+
+## 6. Czech Payment QR Generation
+
+Czech banks use the **SPD (Short Payment Descriptor)** format.
+
+### Account Number → IBAN Conversion
+
+```python
+def czech_account_to_iban(account: str, bank_code: str, prefix: str = '000000') -> str:
+    padded = prefix.zfill(6) + account.zfill(10)
+    bban = bank_code + padded
+    rearranged = bban + '1235' + '00'  # CZ = 12,35
+    check = 98 - (int(rearranged) % 97)
+    return f'CZ{check:02d}{bban}'
+```
+
+### SPD QR String
+
+```
+SPD*1.0*ACC:CZ{IBAN}*AM:{AMOUNT}*CC:CZK*MSG:{MESSAGE}
+```
+
+Generate a QR code from this string and present to the human for scanning with their banking app.
+
+---
+
+## 7. Security Considerations
+
+### 7.1 Human-in-the-Loop Gates
+
+| Gate | When | Why |
+|------|------|-----|
+| **Payment approval** | Before any money transfer | Agent MUST NOT autonomously pay |
+| **Personal data sharing** | Before sending name/address/email | Privacy protection |
+| **Price threshold** | If negotiated price exceeds budget | Financial guardrail |
+
+### 7.2 ADB Security
+
+- **Device authentication:** ADB requires prior USB debugging authorization (device-level trust)
+- **Network exposure:** Use USB connection, NOT `adb tcpip` over network (exposes device to LAN)
+- **Scope limitation:** Agent should only interact with SMS app — no contacts, no file access, no app installs
+- **Credential isolation:** Agent phone number is separate from human's personal number
+
+### 7.3 Data Handling
+
+- **No persistent storage** of seller phone numbers or bank details after transaction completes
+- **SMS content** should be processed in-memory, not logged to disk
+- **Redact** phone numbers and account numbers in any logs or memory files
+
+### 7.4 Anti-Abuse
+
+- **Rate limiting:** Max 1 SMS per 30 seconds to avoid carrier spam flags
+- **Verification cooldown:** Bazos may throttle repeated phone verifications — respect delays
+- **No automated bulk purchasing** — this playbook is for single, intentional purchases
+
+---
+
+## 8. Known Pitfalls
+
+| Pitfall | Impact | Mitigation |
+|---------|--------|------------|
+| `input text` drops spaces | Garbled messages | Word-by-word + `KEYCODE_SPACE` |
+| Keyboard obscures Send button | Silent tap failure | `KEYCODE_BACK` before tapping Send |
+| Stale compose window | Text appended to old message | Always `am force-stop` before composing |
+| Wrong subdomain verification | Code rejected | Verify on listing's subdomain |
+| Screenshot coords ≠ touch coords | Tap misses target | Always use UI dump bounds |
+| Script killed mid-send | Duplicate on retry | Verify compose field empty after each attempt |
+| SMS content provider blocked | Can't read SMS programmatically | Use UI dump method instead |
+
+---
+
+## 9. Proof-of-Concept Outline
+
+A minimal PoC consists of three scripts:
+
+### `bazos_phone_reveal.py`
+- Input: Bazos listing URL, agent phone number, ADB device ID
+- Flow: Browser → trigger overlay → enter phone → read SMS via ADB → enter code → return seller phone
+- Output: Seller phone number
+
+### `adb_sms.sh`
+- Functions: `send_sms(device, number, message)`, `read_thread(device, contact_name)`
+- Handles: force-stop, word-by-word typing, keyboard dismiss, send verification
+
+### `purchase_orchestrator.py`
+- Input: Listing URL, budget, shipping preference
+- Orchestrates: phone reveal → SMS negotiation loop → logistics lookup → payment QR generation
+- Human gate: Presents QR, waits for confirmation before sending payment confirmation SMS
+
+---
+
+## 10. Future Improvements
+
+- **OCR fallback:** Screenshot + OCR when UI dump fails to capture dynamic content
+- **Multi-device support:** Route SMS through different devices based on carrier/region
+- **Conversation memory:** Track multi-turn negotiations across sessions
+- **Auto-retry with backoff:** Handle transient ADB connection drops
+- **Platform expansion:** Adapt patterns for other Czech classifieds (Sbazar, Facebook Marketplace)
+
+---
+
+*This playbook is based on a successful real-world purchase completed on 2026-02-19. All techniques were validated against a Samsung device running Samsung Messages.*
+

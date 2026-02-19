@@ -6,6 +6,10 @@ baseurl: "/docs"
 markdown: kramdown
 highlighter: rouge
 
+include:
+  - llms.txt
+  - llms-full.txt
+
 exclude:
   - LICENSE
   - README.md
