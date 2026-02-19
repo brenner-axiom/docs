@@ -1,0 +1,577 @@
+---
+layout: default
+title: "Fleet Status — Air Operations Center"
+description: "#B4mad Agent Fleet metrics dashboard with aviation theme"
+---
+
+<style>
+/* Fleet Dashboard Styles */
+.fleet-header {
+  text-align: center;
+  margin-bottom: 3rem;
+  position: relative;
+}
+.fleet-header h1 {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 2rem;
+  color: var(--accent-light);
+  text-transform: uppercase;
+  letter-spacing: 0.15em;
+  text-shadow: 0 0 20px var(--accent-glow);
+  margin-bottom: 0.25rem;
+}
+.fleet-header .subtitle {
+  font-family: 'JetBrains Mono', monospace;
+  color: var(--text-muted);
+  font-size: 0.8rem;
+  letter-spacing: 0.3em;
+  text-transform: uppercase;
+}
+.fleet-header .status-line {
+  margin-top: 1rem;
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 0.75rem;
+  color: var(--accent);
+}
+.fleet-header .status-line .blink {
+  animation: blink-status 1.5s step-end infinite;
+}
+@keyframes blink-status {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0; }
+}
+
+/* Cumulative Stats Bar */
+.stats-bar {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
+  gap: 1rem;
+  margin-bottom: 3rem;
+  padding: 1.5rem;
+  background: var(--bg-secondary);
+  border: 1px solid var(--border-accent);
+  border-radius: var(--radius-lg);
+  position: relative;
+}
+.stats-bar::before {
+  content: 'CUMULATIVE OPS';
+  position: absolute;
+  top: -0.6rem;
+  left: 1.5rem;
+  background: var(--bg-secondary);
+  padding: 0 0.5rem;
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 0.65rem;
+  color: var(--accent);
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+}
+.stat-item {
+  text-align: center;
+}
+.stat-value {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 1.8rem;
+  font-weight: 700;
+  color: var(--accent-light);
+  text-shadow: 0 0 10px var(--accent-glow);
+  line-height: 1;
+}
+.stat-label {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 0.6rem;
+  color: var(--text-muted);
+  text-transform: uppercase;
+  letter-spacing: 0.15em;
+  margin-top: 0.25rem;
+}
+.stat-unit {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 0.7rem;
+  color: var(--text-secondary);
+}
+
+/* Fleet Grid */
+.fleet-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+  gap: 1.5rem;
+  margin-bottom: 3rem;
+}
+.aircraft-card {
+  background: var(--bg-card);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-lg);
+  padding: 1.5rem;
+  position: relative;
+  overflow: hidden;
+  transition: border-color 0.3s, box-shadow 0.3s;
+}
+.aircraft-card:hover {
+  border-color: var(--accent);
+  box-shadow: 0 0 20px var(--accent-glow);
+}
+.aircraft-card::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 2px;
+  background: linear-gradient(90deg, transparent, var(--accent), transparent);
+  opacity: 0.6;
+}
+.card-header {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  margin-bottom: 1rem;
+}
+.card-icon {
+  font-size: 1.8rem;
+  line-height: 1;
+}
+.card-callsign {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 1.1rem;
+  font-weight: 700;
+  color: var(--text-primary);
+}
+.card-role {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 0.7rem;
+  color: var(--text-muted);
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+}
+.card-stats {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 0.5rem;
+  margin-top: 0.75rem;
+}
+.card-stat {
+  background: var(--bg-secondary);
+  border-radius: var(--radius);
+  padding: 0.5rem 0.75rem;
+}
+.card-stat-label {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 0.55rem;
+  color: var(--text-muted);
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+}
+.card-stat-value {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 1rem;
+  font-weight: 700;
+  color: var(--accent-light);
+}
+.altitude-badge {
+  display: inline-block;
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 0.65rem;
+  padding: 0.15rem 0.5rem;
+  border-radius: 3px;
+  letter-spacing: 0.1em;
+  font-weight: 700;
+}
+.alt-fl410 { background: rgba(69, 139, 116, 0.2); color: var(--accent-light); border: 1px solid var(--accent); }
+.alt-fl350 { background: rgba(69, 139, 116, 0.15); color: var(--accent); border: 1px solid var(--accent-dark); }
+.alt-fl200 { background: rgba(52, 152, 219, 0.15); color: var(--info); border: 1px solid rgba(52, 152, 219, 0.4); }
+.alt-gnd { background: rgba(243, 156, 18, 0.15); color: var(--warning); border: 1px solid rgba(243, 156, 18, 0.3); }
+.status-badge {
+  display: inline-block;
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 0.6rem;
+  padding: 0.1rem 0.4rem;
+  border-radius: 3px;
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+}
+.status-operational { background: rgba(69, 139, 116, 0.2); color: var(--accent-light); }
+.status-standby { background: rgba(243, 156, 18, 0.2); color: var(--warning); }
+
+/* Flight Log */
+.flight-log {
+  background: var(--bg-secondary);
+  border: 1px solid var(--border-accent);
+  border-radius: var(--radius-lg);
+  padding: 1.5rem;
+  margin-bottom: 3rem;
+  position: relative;
+}
+.flight-log::before {
+  content: 'FLIGHT LOG — RECENT SORTIES';
+  position: absolute;
+  top: -0.6rem;
+  left: 1.5rem;
+  background: var(--bg-secondary);
+  padding: 0 0.5rem;
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 0.65rem;
+  color: var(--accent);
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+}
+.log-entry {
+  display: grid;
+  grid-template-columns: 80px 100px 1fr 80px;
+  gap: 1rem;
+  padding: 0.75rem 0;
+  border-bottom: 1px solid var(--border);
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 0.8rem;
+  align-items: center;
+}
+.log-entry:last-child { border-bottom: none; }
+.log-time { color: var(--text-muted); font-size: 0.7rem; }
+.log-callsign { color: var(--accent-light); font-weight: 700; }
+.log-mission { color: var(--text-secondary); }
+.log-status { text-align: right; }
+.log-status .complete { color: var(--accent-light); }
+.log-status .active { color: var(--warning); }
+
+/* Radar sweep animation */
+.radar-container {
+  position: absolute;
+  top: 1rem;
+  right: 1rem;
+  width: 40px;
+  height: 40px;
+  opacity: 0.3;
+}
+.radar-sweep {
+  width: 100%;
+  height: 100%;
+  border: 1px solid var(--accent);
+  border-radius: 50%;
+  position: relative;
+  overflow: hidden;
+}
+.radar-sweep::after {
+  content: '';
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: 50%;
+  height: 2px;
+  background: var(--accent);
+  transform-origin: left center;
+  animation: radar-spin 4s linear infinite;
+}
+@keyframes radar-spin {
+  from { transform: rotate(0deg); }
+  to { transform: rotate(360deg); }
+}
+
+/* Responsive */
+@media (max-width: 600px) {
+  .log-entry { grid-template-columns: 1fr; gap: 0.25rem; }
+  .stats-bar { grid-template-columns: repeat(2, 1fr); }
+  .fleet-grid { grid-template-columns: 1fr; }
+}
+</style>
+
+<div class="fleet-header">
+  <div class="radar-container"><div class="radar-sweep"></div></div>
+  <h1>✈ Fleet Status</h1>
+  <div class="subtitle">B4mad Air Operations Center</div>
+  <div class="status-line"><span class="blink">▮</span> ALL SYSTEMS NOMINAL — DEFCON 5 — 19 FEB 2026 22:44Z</div>
+</div>
+
+<!-- Cumulative Stats -->
+<div class="stats-bar">
+  <div class="stat-item">
+    <div class="stat-value">47</div>
+    <div class="stat-unit">nm</div>
+    <div class="stat-label">Distance Flown</div>
+  </div>
+  <div class="stat-item">
+    <div class="stat-value">2.1M</div>
+    <div class="stat-unit">kg</div>
+    <div class="stat-label">Fuel Burned</div>
+  </div>
+  <div class="stat-item">
+    <div class="stat-value">8</div>
+    <div class="stat-unit">pax</div>
+    <div class="stat-label">Passengers</div>
+  </div>
+  <div class="stat-item">
+    <div class="stat-value">36.4</div>
+    <div class="stat-unit">hrs</div>
+    <div class="stat-label">Flight Hours</div>
+  </div>
+  <div class="stat-item">
+    <div class="stat-value">63</div>
+    <div class="stat-unit">msn</div>
+    <div class="stat-label">Sorties Flown</div>
+  </div>
+  <div class="stat-item">
+    <div class="stat-value">5/6</div>
+    <div class="stat-unit"></div>
+    <div class="stat-label">Fleet Ready</div>
+  </div>
+</div>
+
+<!-- Fleet Grid -->
+<div class="fleet-grid">
+
+  <!-- Brenner Axiom -->
+  <div class="aircraft-card">
+    <div class="card-header">
+      <span class="card-icon">🌐</span>
+      <div>
+        <div class="card-callsign">BRENNER AXIOM</div>
+        <div class="card-role">Command & Control — "Tower"</div>
+      </div>
+    </div>
+    <span class="altitude-badge alt-fl350">FL350 · Gemini Pro</span>
+    <span class="status-badge status-operational">Operational</span>
+    <div class="card-stats">
+      <div class="card-stat">
+        <div class="card-stat-label">Sorties</div>
+        <div class="card-stat-value">24</div>
+      </div>
+      <div class="card-stat">
+        <div class="card-stat-label">Flight Hrs</div>
+        <div class="card-stat-value">18.2</div>
+      </div>
+      <div class="card-stat">
+        <div class="card-stat-label">Fuel (tokens)</div>
+        <div class="card-stat-value">820K</div>
+      </div>
+      <div class="card-stat">
+        <div class="card-stat-label">Distance</div>
+        <div class="card-stat-value">22 nm</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- CodeMonkey -->
+  <div class="aircraft-card">
+    <div class="card-header">
+      <span class="card-icon">🐵</span>
+      <div>
+        <div class="card-callsign">CODEMONKEY</div>
+        <div class="card-role">Strike Fighter — Coding Sorties</div>
+      </div>
+    </div>
+    <span class="altitude-badge alt-fl410">FL410 · Opus</span>
+    <span class="status-badge status-operational">Operational</span>
+    <div class="card-stats">
+      <div class="card-stat">
+        <div class="card-stat-label">Sorties</div>
+        <div class="card-stat-value">14</div>
+      </div>
+      <div class="card-stat">
+        <div class="card-stat-label">Flight Hrs</div>
+        <div class="card-stat-value">8.5</div>
+      </div>
+      <div class="card-stat">
+        <div class="card-stat-label">Fuel (tokens)</div>
+        <div class="card-stat-value">640K</div>
+      </div>
+      <div class="card-stat">
+        <div class="card-stat-label">PRs Opened</div>
+        <div class="card-stat-value">5</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- PltOps -->
+  <div class="aircraft-card">
+    <div class="card-header">
+      <span class="card-icon">🔧</span>
+      <div>
+        <div class="card-callsign">PLTOPS</div>
+        <div class="card-role">Heavy Lifter — Infrastructure Runs</div>
+      </div>
+    </div>
+    <span class="altitude-badge alt-fl410">FL410 · Opus</span>
+    <span class="status-badge status-operational">Operational</span>
+    <div class="card-stats">
+      <div class="card-stat">
+        <div class="card-stat-label">Sorties</div>
+        <div class="card-stat-value">8</div>
+      </div>
+      <div class="card-stat">
+        <div class="card-stat-label">Flight Hrs</div>
+        <div class="card-stat-value">4.1</div>
+      </div>
+      <div class="card-stat">
+        <div class="card-stat-label">Fuel (tokens)</div>
+        <div class="card-stat-value">310K</div>
+      </div>
+      <div class="card-stat">
+        <div class="card-stat-label">PRs Opened</div>
+        <div class="card-stat-value">2</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Romanov -->
+  <div class="aircraft-card">
+    <div class="card-header">
+      <span class="card-icon">🎹</span>
+      <div>
+        <div class="card-callsign">ROMANOV</div>
+        <div class="card-role">Recon/AWACS — Deep Research</div>
+      </div>
+    </div>
+    <span class="altitude-badge alt-fl410">FL410 · Opus</span>
+    <span class="status-badge status-operational">Operational</span>
+    <div class="card-stats">
+      <div class="card-stat">
+        <div class="card-stat-label">Sorties</div>
+        <div class="card-stat-value">12</div>
+      </div>
+      <div class="card-stat">
+        <div class="card-stat-label">Flight Hrs</div>
+        <div class="card-stat-value">4.8</div>
+      </div>
+      <div class="card-stat">
+        <div class="card-stat-label">Fuel (tokens)</div>
+        <div class="card-stat-value">280K</div>
+      </div>
+      <div class="card-stat">
+        <div class="card-stat-label">Papers</div>
+        <div class="card-stat-value">12</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Brew -->
+  <div class="aircraft-card">
+    <div class="card-header">
+      <span class="card-icon">☕</span>
+      <div>
+        <div class="card-callsign">BREW</div>
+        <div class="card-role">Tanker — URL Refueling</div>
+      </div>
+    </div>
+    <span class="altitude-badge alt-fl200">FL200 · Haiku</span>
+    <span class="status-badge status-standby">Standby</span>
+    <div class="card-stats">
+      <div class="card-stat">
+        <div class="card-stat-label">Sorties</div>
+        <div class="card-stat-value">3</div>
+      </div>
+      <div class="card-stat">
+        <div class="card-stat-label">Flight Hrs</div>
+        <div class="card-stat-value">0.4</div>
+      </div>
+      <div class="card-stat">
+        <div class="card-stat-label">Fuel (tokens)</div>
+        <div class="card-stat-value">15K</div>
+      </div>
+      <div class="card-stat">
+        <div class="card-stat-label">URLs Proc</div>
+        <div class="card-stat-value">3</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- LinkedIn Brief -->
+  <div class="aircraft-card">
+    <div class="card-header">
+      <span class="card-icon">📰</span>
+      <div>
+        <div class="card-callsign">LINKEDIN BRIEF</div>
+        <div class="card-role">ELINT — Intelligence Gathering</div>
+      </div>
+    </div>
+    <span class="altitude-badge alt-fl200">FL200 · Haiku</span>
+    <span class="status-badge status-standby">Standby</span>
+    <div class="card-stats">
+      <div class="card-stat">
+        <div class="card-stat-label">Sorties</div>
+        <div class="card-stat-value">2</div>
+      </div>
+      <div class="card-stat">
+        <div class="card-stat-label">Flight Hrs</div>
+        <div class="card-stat-value">0.4</div>
+      </div>
+      <div class="card-stat">
+        <div class="card-stat-label">Fuel (tokens)</div>
+        <div class="card-stat-value">12K</div>
+      </div>
+      <div class="card-stat">
+        <div class="card-stat-label">Briefs</div>
+        <div class="card-stat-value">1</div>
+      </div>
+    </div>
+  </div>
+
+</div>
+
+<!-- Flight Log -->
+<div class="flight-log">
+  <div class="log-entry">
+    <span class="log-time">22:44Z</span>
+    <span class="log-callsign">CODEMONKEY</span>
+    <span class="log-mission">Fleet metrics dashboard — beads-hub-9eu</span>
+    <span class="log-status"><span class="active">● ACTIVE</span></span>
+  </div>
+  <div class="log-entry">
+    <span class="log-time">22:30Z</span>
+    <span class="log-callsign">ROMANOV</span>
+    <span class="log-mission">Research: Loopy civic tech analysis — beads-hub-9dr</span>
+    <span class="log-status"><span class="complete">✓ RTB</span></span>
+  </div>
+  <div class="log-entry">
+    <span class="log-time">22:15Z</span>
+    <span class="log-callsign">ROMANOV</span>
+    <span class="log-mission">Research: Loopy blog embedding strategy — beads-hub-9dq</span>
+    <span class="log-status"><span class="complete">✓ RTB</span></span>
+  </div>
+  <div class="log-entry">
+    <span class="log-time">21:50Z</span>
+    <span class="log-callsign">ROMANOV</span>
+    <span class="log-mission">Research: Pull-based agent scheduling — beads-hub-9dp</span>
+    <span class="log-status"><span class="complete">✓ RTB</span></span>
+  </div>
+  <div class="log-entry">
+    <span class="log-time">21:30Z</span>
+    <span class="log-callsign">CODEMONKEY</span>
+    <span class="log-mission">Docs site setup & deployment — beads-hub-9dn</span>
+    <span class="log-status"><span class="complete">✓ RTB</span></span>
+  </div>
+  <div class="log-entry">
+    <span class="log-time">21:00Z</span>
+    <span class="log-callsign">ROMANOV</span>
+    <span class="log-mission">Research: DAO governance for B4mad — beads-hub-9dm</span>
+    <span class="log-status"><span class="complete">✓ RTB</span></span>
+  </div>
+  <div class="log-entry">
+    <span class="log-time">20:30Z</span>
+    <span class="log-callsign">CODEMONKEY</span>
+    <span class="log-mission">DAO smart contracts scaffold — beads-hub-9dk</span>
+    <span class="log-status"><span class="complete">✓ RTB</span></span>
+  </div>
+  <div class="log-entry">
+    <span class="log-time">20:00Z</span>
+    <span class="log-callsign">ROMANOV</span>
+    <span class="log-mission">Research: Security-first agent architecture — beads-hub-9dj</span>
+    <span class="log-status"><span class="complete">✓ RTB</span></span>
+  </div>
+  <div class="log-entry">
+    <span class="log-time">19:30Z</span>
+    <span class="log-callsign">PLTOPS</span>
+    <span class="log-mission">GitHub Pages CI/CD pipeline — beads-hub-9di</span>
+    <span class="log-status"><span class="complete">✓ RTB</span></span>
+  </div>
+  <div class="log-entry">
+    <span class="log-time">19:00Z</span>
+    <span class="log-callsign">TOWER</span>
+    <span class="log-mission">Mission planning & agent fleet coordination</span>
+    <span class="log-status"><span class="complete">✓ RTB</span></span>
+  </div>
+</div>
+
+<div style="text-align: center; margin-top: 2rem;">
+  <p style="font-family: 'JetBrains Mono', monospace; font-size: 0.65rem; color: var(--text-muted); letter-spacing: 0.15em;">
+    DATA EPOCH: 19 FEB 2026 · REFRESH: MANUAL / <code>scripts/update-fleet-stats.sh</code> · RTB = RETURNED TO BASE
+  </p>
+</div>
