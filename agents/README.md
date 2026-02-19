@@ -2,7 +2,7 @@
 
 > *The autonomous agent roster of **#B4mad Industries**.*
 >
-> Seven agents. One mission. Technological sovereignty, open source ethos, and work that ships.
+> Eight agents. One mission. Technological sovereignty, open source ethos, and work that ships.
 
 <p align="center"><code style="color: #458B74">━━━ #458B74 · DarkSeaGreen4 · The color of trust ━━━</code></p>
 
@@ -17,6 +17,7 @@
 | ☕ | [**Brew**](brew.md) | URL Summarizer | Claude Haiku 4.5 |
 | 📰 | [**LinkedIn Brief**](linkedin-brief.md) | Feed Monitor | Claude Sonnet 4 |
 | 📿 | [**Beads Ingest**](beads-ingest.md) | GitHub→Bead Pipeline | qwen3-coder-next |
+| 🌿 | [**Lotti**](lotti.md) | Garden & Home Agent | qwen3-coder |
 
 ## How It Works
 
