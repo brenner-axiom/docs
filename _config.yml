@@ -1,0 +1,24 @@
+title: "#B4mad Documentation"
+description: "Public documentation for #B4mad Industries' AI agent infrastructure."
+url: "https://brenner-axiom.github.io"
+baseurl: "/docs"
+
+theme: minima
+
+markdown: kramdown
+highlighter: rouge
+
+exclude:
+  - LICENSE
+  - README.md
+  - Gemfile
+  - Gemfile.lock
+
+include:
+  - _config.yml
+
+defaults:
+  - scope:
+      path: ""
+    values:
+      layout: "default"
