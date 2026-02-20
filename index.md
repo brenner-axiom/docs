@@ -51,6 +51,18 @@ title: Home
 </div>
 
 <div class="section">
+  <div class="section-title">Models & Simulations</div>
+  <div class="card-grid">
+    <a href="{{ '/models/loopy-sustainability-model' | relative_url }}" class="card" style="text-decoration:none;">
+      <span class="card-emoji">🌐</span>
+      <h3>LOOPY Sustainability Model</h3>
+      <p>Interactive visualization of #B4mad's economic sustainability dynamics.</p>
+      <span class="card-tag">Model</span>
+    </a>
+  </div>
+</div>
+
+<div class="section">
   <div class="section-title">Research Papers</div>
   <div class="card-grid">
     <a href="{{ '/research/2026-02-19-security-first-agents' | relative_url }}" class="card" style="text-decoration:none;">

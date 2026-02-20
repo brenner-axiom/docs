@@ -1,0 +1,260 @@
+---
+layout: default
+title: LOOPY Sustainability Model
+permalink: /models/loopy-sustainability-model/
+---
+
+# LOOPY Sustainability Model for #B4mad Industries
+
+This interactive visualization represents the #B4mad economic sustainability model, inspired by the LOOPY tool. Explore the reinforcing and balancing feedback loops that govern the platform's viability.
+
+<style>
+  body { font-family: sans-serif; margin: 20px; }
+  .node {
+    fill: #ADD8E6; /* Light blue */
+    stroke: #3182bd;
+    stroke-width: 2px;
+    cursor: pointer;
+  }
+  .node-label {
+    font-size: 12px;
+    text-anchor: middle;
+    pointer-events: none; /* So clicks pass through to the circle */
+  }
+  .link {
+    stroke: #999;
+    stroke-opacity: 0.6;
+    stroke-width: 1.5px;
+    marker-end: url(#arrowhead);
+  }
+  .link.positive {
+    stroke: green;
+  }
+  .link.negative {
+    stroke: red;
+  }
+  .arrowhead {
+    fill: #999;
+  }
+  .arrowhead.positive {
+    fill: green;
+  }
+  .arrowhead.negative {
+    fill: red;
+  }
+  .control-panel {
+    margin-top: 20px;
+    padding: 15px;
+    border: 1px solid #ccc;
+    background-color: #f9f9f9;
+  }
+  .control-panel button {
+    margin-right: 10px;
+    padding: 8px 12px;
+    cursor: pointer;
+  }
+</style>
+
+<div id="loopy-model"></div>
+
+<script src="https://d3js.org/d3.v7.min.js"></script>
+<script>
+const nodesData = [
+  { id: "donations", name: "Donations", value: 10 },
+  { id: "compute_budget", name: "Compute Budget", value: 50 },
+  { id: "platform_quality", name: "Platform Quality", value: 70 },
+  { id: "agent_capability", name: "Agent Capability", value: 60 },
+  { id: "user_base", name: "User Base", value: 100 },
+  { id: "community_size", name: "Community Size", value: 30 },
+  { id: "oss_contributions", name: "Open Source Contributions", value: 20 },
+  { id: "compute_cost", name: "Compute Cost", value: 40 },
+  { id: "maintenance_burden", name: "Maintenance Burden", value: 25 }
+];
+
+const linksData = [
+  { source: "donations", target: "compute_budget", polarity: "+" },
+  { source: "compute_budget", target: "platform_quality", polarity: "+" },
+  { source: "platform_quality", target: "agent_capability", polarity: "+" },
+  { source: "agent_capability", target: "user_base", polarity: "+" },
+  { source: "user_base", target: "donations", polarity: "+" },
+  { source: "user_base", target: "community_size", polarity: "+" },
+  { source: "community_size", target: "oss_contributions", polarity: "+" },
+  { source: "oss_contributions", target: "agent_capability", polarity: "+" },
+  { source: "oss_contributions", target: "maintenance_burden", polarity: "-" },
+  { source: "user_base", target: "compute_cost", polarity: "+" },
+  { source: "compute_cost", target: "compute_budget", polarity: "-" },
+  { source: "maintenance_burden", target: "platform_quality", polarity: "-" },
+  { source: "user_base", target: "maintenance_burden", polarity: "+" },
+  { source: "platform_quality", target: "user_base", polarity: "+" } // Secondary reinforcement
+];
+
+const width = 960;
+const height = 600;
+
+const svg = d3.select("#loopy-model")
+  .append("svg")
+  .attr("width", width)
+  .attr("height", height);
+
+// Define arrow markers
+svg.append("defs").selectAll("marker")
+  .data(["positive", "negative"])
+  .enter().append("marker")
+    .attr("id", d => "arrowhead-" + d)
+    .attr("viewBox", "0 -5 10 10")
+    .attr("refX", 20) // Shift arrow back to be on the edge of the circle
+    .attr("refY", 0)
+    .attr("orient", "auto")
+    .attr("markerWidth", 6)
+    .attr("markerHeight", 6)
+    .attr("xoverflow", "visible")
+  .append("path")
+    .attr("d", "M0,-5L10,0L0,5")
+    .attr("class", d => "arrowhead " + d)
+    .style("stroke", "none");
+
+const simulation = d3.forceSimulation(nodesData)
+  .force("link", d3.forceLink(linksData).id(d => d.id).distance(100))
+  .force("charge", d3.forceManyBody().strength(-300))
+  .force("center", d3.forceCenter(width / 2, height / 2));
+
+const link = svg.append("g")
+  .attr("class", "links")
+  .selectAll("line")
+  .data(linksData)
+  .enter().append("line")
+    .attr("class", d => "link " + (d.polarity === "+" ? "positive" : "negative"))
+    .attr("marker-end", d => "url(#arrowhead-" + (d.polarity === "+" ? "positive" : "negative") + ")");
+
+const node = svg.append("g")
+  .attr("class", "nodes")
+  .selectAll("circle")
+  .data(nodesData)
+  .enter().append("circle")
+    .attr("r", 15)
+    .attr("class", "node")
+    .call(d3.drag()
+        .on("start", dragstarted)
+        .on("drag", dragged)
+        .on("end", dragended));
+
+const labels = svg.append("g")
+  .attr("class", "labels")
+  .selectAll("text")
+  .data(nodesData)
+  .enter().append("text")
+    .attr("class", "node-label")
+    .attr("dy", "0.35em")
+    .text(d => d.name);
+
+// Add interaction: click a node to increase/decrease its value (and trigger propagation)
+node.on("click", function(event, d) {
+  d.value += 10; // Increase value by 10
+  updateNodeDisplay(d);
+  propagateEffect(d, 0.1); // Propagate a 10% effect
+});
+
+function updateNodeDisplay(d) {
+  // For now, just update the label if we want to show value, or change color
+  // A simple way to represent value change visually is a color gradient or size change.
+  // For simplicity, let's just make it pulse or change fill slightly for now.
+  d3.select(this) // 'this' refers to the clicked circle
+    .transition().duration(200)
+    .attr("fill", "#FFD700") // Gold color on click
+    .transition().duration(500)
+    .attr("fill", "#ADD8E6"); // Back to light blue
+}
+
+function propagateEffect(sourceNode, initialEffectMagnitude) {
+  const queue = [{ node: sourceNode, effect: initialEffectMagnitude }];
+  const visited = new Set();
+  const nodeEffects = new Map(nodesData.map(n => [n.id, 0])); // Store cumulative effects for this step
+
+  let head = 0;
+  while (head < queue.length) {
+    const { node: currentNode, effect: currentEffect } = queue[head++];
+
+    if (visited.has(currentNode.id)) continue;
+    visited.add(currentNode.id);
+
+    // Apply effect to current node (this is a simple visual update, not a full simulation)
+    // For a real simulation, currentNode.value would be updated based on effect
+    // We'll simulate a visual ripple for now.
+    d3.select(node.filter(d => d.id === currentNode.id).node())
+      .transition().duration(100)
+      .attr("fill", "#FFD700") // Temporarily change color
+      .transition().duration(500).delay(100)
+      .attr("fill", "#ADD8E6");
+
+    linksData.filter(l => l.source.id === currentNode.id).forEach(link => {
+      const targetNode = link.target;
+      const polarity = link.polarity === "+" ? 1 : -1;
+      const nextEffect = currentEffect * 0.5 * polarity; // Effect dampens over distance
+
+      // Visually indicate link activity
+      d3.select(link.lineElement) // Assume link elements are accessible
+        .transition().duration(100)
+        .style("stroke-width", "4px")
+        .transition().duration(500).delay(100)
+        .style("stroke-width", "1.5px");
+
+      if (Math.abs(nextEffect) > 0.01) { // Only propagate significant effects
+        nodeEffects.set(targetNode.id, nodeEffects.get(targetNode.id) + nextEffect);
+        // Add to queue for next iteration, but don't re-add if already processing this path
+        if (!visited.has(targetNode.id)) {
+            queue.push({ node: targetNode, effect: nextEffect });
+        }
+      }
+    });
+  }
+
+  // After processing all direct and indirect effects, apply cumulative changes visually.
+  // This is a simplified propagation, not a true stock-and-flow model.
+  nodesData.forEach(n => {
+      if (nodeEffects.get(n.id) !== 0) {
+          // A more complex model would adjust n.value based on all incoming effects
+          // For this visualization, we just show the ripple effect
+      }
+  });
+}
+
+
+simulation.on("tick", () => {
+  link
+    .attr("x1", d => d.source.x)
+    .attr("y1", d => d.source.y)
+    .attr("x2", d => d.target.x)
+    .attr("y2", d => d.target.y);
+
+  node
+    .attr("cx", d => d.x)
+    .attr("cy", d => d.y);
+
+  labels
+    .attr("x", d => d.x)
+    .attr("y", d => d.y + 30); // Position label below the node
+});
+
+function dragstarted(event, d) {
+  if (!event.active) simulation.alphaTarget(0.3).restart();
+  d.fx = d.x;
+  d.fy = d.y;
+}
+
+function dragged(event, d) {
+  d.fx = event.x;
+  d.fy = event.y;
+}
+
+function dragended(event, d) {
+  if (!event.active) simulation.alphaTarget(0);
+  d.fx = null;
+  d.fy = null;
+}
+
+// Store link elements for propagation (needed for visual feedback on links)
+link.each(function(d) {
+    d.lineElement = this;
+});
+
+</script>
