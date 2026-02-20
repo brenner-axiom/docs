@@ -23,3 +23,4 @@ Each paper follows a standard structure:
 | 2026-02-19 | [Embedding LOOPY Simulations in goern.name Blog Posts](2026-02-19-loopy-blog-embedding.md) | Romanov |
 | 2026-02-20 | [System Tooling Over LLM Calls — Token-Saving Patterns for OpenClaw Operations](2026-02-20-system-tooling-token-savings.md) | Romanov |
 | 2026-02-20 | [Autonomous Agent Development Patterns: A #B4mad Case Study](2026-02-20-autonomous-agent-development-patterns.md) | Romanov |
+| 2026-02-20 | [Benchmarking Agent-Generated Code Quality: A #B4mad Framework](2026-02-20-agent-code-benchmarks.md) | Romanov |
