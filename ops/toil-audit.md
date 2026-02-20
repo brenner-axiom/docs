@@ -1,7 +1,7 @@
 ---
 layout: page
 title: "Ops Toil Audit"
-permalink: /docs/ops/toil-audit
+permalink: /ops/toil-audit
 ---
 
 # Ops Toil Audit — #B4mad Infrastructure

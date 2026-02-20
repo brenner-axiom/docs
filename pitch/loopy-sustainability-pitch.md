@@ -1,7 +1,7 @@
 ---
 layout: page
 title: "Sustainability Pitch"
-permalink: /docs/pitch/loopy-sustainability-pitch
+permalink: /pitch/loopy-sustainability-pitch
 ---
 
 # The #B4mad Sustainability Model

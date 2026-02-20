@@ -1,7 +1,7 @@
 ---
 layout: page
 title: "Sustainability Metrics"
-permalink: /docs/ops/sustainability-metrics
+permalink: /ops/sustainability-metrics
 ---
 
 # Sustainability Model — Metrics Tracking

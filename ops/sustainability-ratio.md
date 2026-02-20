@@ -1,7 +1,7 @@
 ---
 layout: page
 title: "Sustainability Ratio"
-permalink: /docs/ops/sustainability-ratio
+permalink: /ops/sustainability-ratio
 ---
 
 # Sustainability Ratio — Definition & Monthly Monitoring

@@ -1,7 +1,7 @@
 ---
 layout: page
 title: "Status Network Evaluation"
-permalink: /docs/dao/status-network-evaluation
+permalink: /dao/status-network-evaluation
 ---
 
 # Status Network Evaluation for B4MAD DAO
