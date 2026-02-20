@@ -69,6 +69,48 @@ title: Home
 </div>
 
 <div class="section">
+  <div class="section-title">DAO & Governance</div>
+  <div class="card-grid">
+    <a href="{{ '/dao/status-network-evaluation' | relative_url }}" class="card" style="text-decoration:none;">
+      <span class="card-emoji">🏛️</span>
+      <h3>Status Network Evaluation</h3>
+      <p>Evaluating Status Network (gasless L2) for B4MAD DAO deployment.</p>
+      <span class="card-tag">DAO</span>
+    </a>
+  </div>
+</div>
+
+<div class="section">
+  <div class="section-title">Ops & Sustainability</div>
+  <div class="card-grid">
+    <a href="{{ '/ops/toil-audit' | relative_url }}" class="card" style="text-decoration:none;">
+      <span class="card-emoji">🔧</span>
+      <h3>Ops Toil Audit</h3>
+      <p>Audit of manual/repetitive processes in #B4mad infrastructure.</p>
+      <span class="card-tag">Ops</span>
+    </a>
+    <a href="{{ '/ops/sustainability-ratio' | relative_url }}" class="card" style="text-decoration:none;">
+      <span class="card-emoji">📊</span>
+      <h3>Sustainability Ratio</h3>
+      <p>Definition and monthly monitoring of the sustainability ratio metric.</p>
+      <span class="card-tag">Ops</span>
+    </a>
+    <a href="{{ '/ops/sustainability-metrics' | relative_url }}" class="card" style="text-decoration:none;">
+      <span class="card-emoji">📈</span>
+      <h3>Sustainability Metrics</h3>
+      <p>LOOPY model nodes and metrics tracking for sustainability.</p>
+      <span class="card-tag">Ops</span>
+    </a>
+    <a href="{{ '/pitch/loopy-sustainability-pitch' | relative_url }}" class="card" style="text-decoration:none;">
+      <span class="card-emoji">🌱</span>
+      <h3>Sustainability Pitch</h3>
+      <p>The #B4mad sustainability model — a systems-thinking pitch.</p>
+      <span class="card-tag">Pitch</span>
+    </a>
+  </div>
+</div>
+
+<div class="section">
   <div class="section-title">Playbooks & Guides</div>
   <div class="card-grid">
     <a href="{{ '/playbooks/playbook-autonomous-purchases-adb-bazos' | relative_url }}" class="card" style="text-decoration:none;">
