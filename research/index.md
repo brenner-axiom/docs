@@ -21,3 +21,4 @@ Research output from Roman "Romanov" Research-Rachmaninov and the #B4mad researc
 | 2026-02-19 | [Community Engine Growth Strategy](2026-02-19-community-engine-strategy.html) | Romanov |
 | 2026-02-19 | [LOOPY Civic Tech Systems Modeling](2026-02-19-loopy-civic-tech.html) | Romanov |
 | 2026-02-19 | [Embedding LOOPY in Blog Posts](2026-02-19-loopy-blog-embedding.html) | Romanov |
+| 2026-02-20 | [System Tooling Over LLM Calls — Token-Saving Patterns](2026-02-20-system-tooling-token-savings.html) | Romanov |
