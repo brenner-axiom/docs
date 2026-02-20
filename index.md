@@ -65,6 +65,12 @@ title: Home
       <p>Exploring decentralized governance models for agent collectives.</p>
       <span class="card-tag">Research</span>
     </a>
+    <a href="{{ '/research/2026-02-20-system-tooling-token-savings' | relative_url }}" class="card" style="text-decoration:none;">
+      <span class="card-emoji">⚡</span>
+      <h3>System Tooling Over LLM Calls</h3>
+      <p>Token-saving patterns for OpenClaw daily operations — when not to use AI.</p>
+      <span class="card-tag">Research</span>
+    </a>
   </div>
 </div>
 
