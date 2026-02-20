@@ -25,3 +25,4 @@ Each paper follows a standard structure:
 | 2026-02-20 | [Autonomous Agent Development Patterns: A #B4mad Case Study](2026-02-20-autonomous-agent-development-patterns.md) | Romanov |
 | 2026-02-20 | [LLMs and Structured Approaches for Appointment Negotiation](2026-02-20-scheduling-llm-negotiation.md) | Romanov |
 | 2026-02-20 | [Benchmarking Agent-Generated Code Quality: A #B4mad Framework](2026-02-20-agent-code-benchmarks.md) | Romanov |
+| 2026-02-20 | [Bead-Based Agent Collaboration: A Lightweight Framework](2026-02-20-bead-based-collaboration.md) | Romanov |
