@@ -27,3 +27,4 @@ Each paper follows a standard structure:
 | 2026-02-20 | [Benchmarking Agent-Generated Code Quality: A #B4mad Framework](2026-02-20-agent-code-benchmarks.md) | Romanov |
 | 2026-02-20 | [Bead-Based Agent Collaboration: A Lightweight Framework](2026-02-20-bead-based-collaboration.md) | Romanov |
 | 2026-02-21 | [DAO-Funded AI Agents: Using On-Chain Governance to Fund and Sustain Autonomous Agent Operations](2026-02-21-dao-funded-ai-agents.md) | Romanov |
+| 2026-02-21 | [#B4mad DAO Integration: Connecting an Agent Fleet to On-Chain Governance](2026-02-21-dao-agent-fleet-integration.md) | Romanov |
