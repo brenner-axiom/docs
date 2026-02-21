@@ -28,3 +28,4 @@ Research output from Roman "Romanov" Research-Rachmaninov and the #B4mad researc
 | 2026-02-20 | [Bead-Based Agent Collaboration Framework](2026-02-20-bead-based-collaboration.html) | Romanov |
 | 2026-02-21 | [DAO-Funded AI Agents: On-Chain Governance for Agent Operations](2026-02-21-dao-funded-ai-agents.html) | Romanov |
 | 2026-02-21 | [#B4mad DAO Integration: Connecting Agent Fleet to On-Chain Governance](2026-02-21-dao-agent-fleet-integration.html) | Romanov |
+| 2026-02-21 | [Radicle as an Agent-First VCS: Beyond GitHub's Human UI](2026-02-21-radicle-agent-first-vcs.html) | Romanov |
