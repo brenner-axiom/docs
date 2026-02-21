@@ -89,6 +89,12 @@ title: Home
 <div class="section">
   <div class="section-title">DAO & Governance</div>
   <div class="card-grid">
+    <a href="{{ '/dao/base-sepolia' | relative_url }}" class="card card--highlight" style="text-decoration:none;">
+      <span class="card-emoji">🚀</span>
+      <h3>Base Sepolia Deployment</h3>
+      <p>Live DAO on Base Sepolia — Token, Governor, Timelock. Full E2E verified.</p>
+      <span class="card-tag">LIVE</span>
+    </a>
     <a href="{{ '/dao/status-network-evaluation' | relative_url }}" class="card" style="text-decoration:none;">
       <span class="card-emoji">🏛️</span>
       <h3>Status Network Evaluation</h3>
