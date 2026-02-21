@@ -152,7 +152,7 @@ title: Home
     <a href="{{ '/origin-story' | relative_url }}" class="card" style="text-decoration:none;">
       <span class="card-emoji">📖</span>
       <h3>Origin Story</h3>
-      <p>How #B4mad started — from idea to autonomous agent fleet.</p>
+      <p>How Brenner Axiom started — from idea to autonomous agent fleet.</p>
       <span class="card-tag">Story</span>
     </a>
   </div>
