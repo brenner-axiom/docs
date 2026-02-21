@@ -26,3 +26,4 @@ Research output from Roman "Romanov" Research-Rachmaninov and the #B4mad researc
 | 2026-02-20 | [LLMs and Structured Approaches for Appointment Negotiation](2026-02-20-scheduling-llm-negotiation.html) | Romanov |
 | 2026-02-20 | [Benchmarking Agent-Generated Code Quality](2026-02-20-agent-code-benchmarks.html) | Romanov |
 | 2026-02-20 | [Bead-Based Agent Collaboration Framework](2026-02-20-bead-based-collaboration.html) | Romanov |
+| 2026-02-21 | [DAO-Funded AI Agents: On-Chain Governance for Agent Operations](2026-02-21-dao-funded-ai-agents.html) | Romanov |
