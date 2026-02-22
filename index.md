@@ -113,6 +113,12 @@ title: Home
 <div class="section">
   <div class="section-title">Ops & Sustainability</div>
   <div class="card-grid">
+    <a href="{{ '/ops/okr-report-2026-02-22' | relative_url }}" class="card card--highlight" style="text-decoration:none;">
+      <span class="card-emoji">🎯</span>
+      <h3>OKR Progress Report — Feb 22</h3>
+      <p>Q1 2026 OKR snapshot with links to evidence. DAO deployed, skills shipping.</p>
+      <span class="card-tag">NEW</span>
+    </a>
     <a href="{{ '/ops/toil-audit' | relative_url }}" class="card" style="text-decoration:none;">
       <span class="card-emoji">🔧</span>
       <h3>Ops Toil Audit</h3>
