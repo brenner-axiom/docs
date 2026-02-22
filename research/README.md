@@ -30,3 +30,4 @@ Each paper follows a standard structure:
 | 2026-02-21 | [#B4mad DAO Integration: Connecting an Agent Fleet to On-Chain Governance](2026-02-21-dao-agent-fleet-integration.md) | Romanov |
 | 2026-02-21 | [Radicle as an Agent-First VCS: Beyond GitHub's Human UI](2026-02-21-radicle-agent-first-vcs.md) | Romanov |
 | 2026-02-22 | [Legal Framework for Agentic AI and Self-Hosted LLMs in EU/Germany](2026-02-22-legal-framework-agentic-ai-eu.md) | Romanov |
+| 2026-02-22 | [A2A Protocol Spec & Landscape Analysis: Agent Interoperability for OpenClaw](2026-02-22-a2a-protocol-landscape.md) | Romanov |
