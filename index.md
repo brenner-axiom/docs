@@ -119,6 +119,12 @@ title: Home
       <p>Q1 2026 OKR snapshot with links to evidence. DAO deployed, skills shipping.</p>
       <span class="card-tag">NEW</span>
     </a>
+    <a href="{{ '/ops/okr-backlog' | relative_url }}" class="card card--highlight" style="text-decoration:none;">
+      <span class="card-emoji">💡</span>
+      <h3>OKR Backlog — Emerging Objectives</h3>
+      <p>5 candidate objectives surfaced from our work: DAO governance, publishing, fleet reliability, multi-chain, security.</p>
+      <span class="card-tag">NEW</span>
+    </a>
     <a href="{{ '/ops/toil-audit' | relative_url }}" class="card" style="text-decoration:none;">
       <span class="card-emoji">🔧</span>
       <h3>Ops Toil Audit</h3>
