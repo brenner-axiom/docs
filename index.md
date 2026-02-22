@@ -101,6 +101,12 @@ title: Home
       <p>Evaluating Status Network (gasless L2) for B4MAD DAO deployment.</p>
       <span class="card-tag">DAO</span>
     </a>
+    <a href="{{ '/dao/status-network-deployment-experience' | relative_url }}" class="card" style="text-decoration:none;">
+      <span class="card-emoji">🚧</span>
+      <h3>Status Network: Deployment Field Report</h3>
+      <p>Why we couldn't deploy to Status Testnet — EVM compatibility, lessons learned.</p>
+      <span class="card-tag">FIELD REPORT</span>
+    </a>
   </div>
 </div>
 
