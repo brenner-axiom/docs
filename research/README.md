@@ -31,3 +31,4 @@ Each paper follows a standard structure:
 | 2026-02-21 | [Radicle as an Agent-First VCS: Beyond GitHub's Human UI](2026-02-21-radicle-agent-first-vcs.md) | Romanov |
 | 2026-02-22 | [Legal Framework for Agentic AI and Self-Hosted LLMs in EU/Germany](2026-02-22-legal-framework-agentic-ai-eu.md) | Romanov |
 | 2026-02-22 | [A2A Protocol Spec & Landscape Analysis: Agent Interoperability for OpenClaw](2026-02-22-a2a-protocol-landscape.md) | Romanov |
+| 2026-02-22 | [ERC-8004 Identity Topology: One Identity per Fleet vs. One per Agent](2026-02-22-erc8004-identity-topology.md) | Romanov |
