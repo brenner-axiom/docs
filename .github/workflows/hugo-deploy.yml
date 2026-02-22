@@ -1,0 +1,52 @@
+name: Deploy Hugo Site to GitHub Pages
+
+on:
+  push:
+    branches:
+      - main
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write # To push to the gh-pages branch
+      pages: write
+      id-token: write
+
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          submodules: true
+          fetch-depth: 0 # Fetch all history for .GitInfo
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '22' # Use Node.js 22 as specified
+
+      - name: Install Podman (if not available)
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y podman
+
+      - name: Pull Hugo image
+        run: podman pull codeberg.org/b4mad/hugo:v1.147.2
+
+      - name: Build Hugo site
+        run: scripts/build.sh
+        env:
+          HUGO_BASE_URL: ${{ steps.pages.outputs.base_url }} # Or your GitHub Pages URL, e.g., https://<USERNAME>.github.io/<REPO_NAME>/
+
+      - name: Upload artifact
+        uses: actions/upload-pages-artifact@v3
+        with:
+          path: ./public # Hugo's default output directory
+
+      - name: Deploy to GitHub Pages
+        id: deployment
+        uses: actions/deploy-pages@v4
