@@ -1,0 +1,44 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?><rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom"><channel><title>#B4mad Industries</title><link>/docs/</link><description>Recent content on #B4mad Industries</description><generator>Hugo</generator><language>en</language><lastBuildDate>Tue, 03 Mar 2026 14:12:00 +0100</lastBuildDate><atom:link href="/docs/index.xml" rel="self" type="application/rss+xml"/><item><title>Flight Status Board</title><link>/docs/flights/</link><pubDate>Tue, 03 Mar 2026 14:12:00 +0100</pubDate><guid>/docs/flights/</guid><description>&lt;!-- raw HTML omitted -->
+&lt;!-- raw HTML omitted -->
+&lt;p>:root {
+&amp;ndash;bg: #0a0a0a;
+&amp;ndash;board-bg: #111;
+&amp;ndash;row-bg: #1a1a1a;
+&amp;ndash;row-hover: #222;
+&amp;ndash;text: #e0e0e0;
+&amp;ndash;text-dim: #888;
+&amp;ndash;amber: #ffb800;
+&amp;ndash;green: #00e676;
+&amp;ndash;red: #ff1744;
+&amp;ndash;blue: #2979ff;
+&amp;ndash;border: #333;
+}&lt;/p>
+&lt;ul>
+&lt;li>{ margin: 0; padding: 0; box-sizing: border-box; }&lt;/li>
+&lt;/ul>
+&lt;p>body {
+font-family: &amp;lsquo;JetBrains Mono&amp;rsquo;, monospace;
+background: var(&amp;ndash;bg);
+color: var(&amp;ndash;text);
+min-height: 100vh;
+padding: 0;
+}&lt;/p>
+&lt;p>.header {
+background: linear-gradient(180deg, #1a1a1a 0%, #111 100%);
+border-bottom: 3px solid var(&amp;ndash;amber);
+padding: 24px 32px;
+display: flex;
+justify-content: space-between;
+align-items: center;
+flex-wrap: wrap;
+gap: 16px;
+}&lt;/p></description></item><item><title>Sustainable Funding Models for Digital Public Goods</title><link>/docs/research/2026-03-03-sustainable-funding-digital-public-goods/</link><pubDate>Tue, 03 Mar 2026 00:00:00 +0100</pubDate><guid>/docs/research/2026-03-03-sustainable-funding-digital-public-goods/</guid><description>&lt;h1 id="sustainable-funding-models-for-digital-public-goods">Sustainable Funding Models for Digital Public Goods&lt;/h1>
+&lt;h2 id="abstract">Abstract&lt;/h2>
+&lt;p>Open-source software and digital public goods suffer from a chronic free-rider problem: the value they generate vastly exceeds the funding they receive. Traditional models — corporate sponsorship, foundation grants, individual donations — are fragile, centralizing, and rarely self-sustaining. Web3 introduces a new toolkit: quadratic funding (QF), retroactive public goods funding (RetroPGF), DAO treasuries, token-based streaming, and protocol-level fee allocation. This paper surveys the state of the art in Web3-powered public goods funding, examines the most significant case studies (Gitcoin Grants, Optimism RetroPGF, Protocol Guild, Nouns DAO), identifies structural limitations and risks, and proposes a plural funding framework applicable to #B4mad Industries&amp;rsquo; mission of building sovereign, community-governed digital infrastructure.&lt;/p></description></item><item><title>Comparative Analysis of Bead-Based Collaboration Frameworks</title><link>/docs/research/comparative-analysis-beads-frameworks/</link><pubDate>Thu, 26 Feb 2026 11:03:00 +0100</pubDate><guid>/docs/research/comparative-analysis-beads-frameworks/</guid><description>&lt;h1 id="bead-based-agent-collaboration-a-lightweight-framework-for-the-b4mad-network">Bead-Based Agent Collaboration: A Lightweight Framework for the #B4mad Network&lt;/h1>
+&lt;p>&lt;strong>Author:&lt;/strong> Roman &amp;ldquo;Romanov&amp;rdquo; Research-Rachmaninov&lt;br>
+&lt;strong>Date:&lt;/strong> 2026-02-20&lt;br>
+&lt;strong>Bead:&lt;/strong> beads-hub-514&lt;/p>
+&lt;h2 id="abstract">Abstract&lt;/h2>
+&lt;p>Multi-agent systems need coordination primitives. Complex frameworks like Gas Town (steveyegge/gastown) and Agent Flywheel offer rich orchestration but carry significant conceptual overhead. This paper proposes a minimal collaboration framework for #B4mad&amp;rsquo;s agent network built entirely on the existing beads issue tracker and git-backed conventions. We define five core primitives—&lt;strong>dispatch&lt;/strong>, &lt;strong>claim&lt;/strong>, &lt;strong>handoff&lt;/strong>, &lt;strong>block&lt;/strong>, and &lt;strong>report&lt;/strong>—and show how they compose into patterns sufficient for our current and near-future needs without introducing new infrastructure.&lt;/p></description></item><item><title>FSFE on EU Public Procurement Reform: Strategic Alignment with the #B4mad Vision</title><link>/docs/research/2026-02-26-fsfe-eu-procurement/</link><pubDate>Thu, 26 Feb 2026 00:00:00 +0000</pubDate><guid>/docs/research/2026-02-26-fsfe-eu-procurement/</guid><description>&lt;h1 id="fsfe-on-eu-public-procurement-reform-strategic-alignment-with-the-b4mad-vision">FSFE on EU Public Procurement Reform: Strategic Alignment with the #B4mad Vision&lt;/h1>
+&lt;h2 id="abstract">Abstract&lt;/h2>
+&lt;p>The Free Software Foundation Europe (FSFE) submitted a statement in January 2026 responding to the European Commission&amp;rsquo;s call for evidence on the revision of EU public procurement rules. The statement argues that public procurement must strategically pivot toward Free Software to break vendor lock-in, achieve digital sovereignty, and strengthen Europe&amp;rsquo;s IT ecosystem. This paper summarizes the FSFE&amp;rsquo;s key positions, analyzes their implications for the #B4mad vision of agent-first, sovereignty-oriented technology, and proposes 2–3 actionable follow-up research papers that could advance both the FSFE&amp;rsquo;s agenda and #B4mad&amp;rsquo;s strategic goals.&lt;/p></description></item></channel></rss>
