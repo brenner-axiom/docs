@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+  <channel>
+    <title>Agent-Identity on #B4mad Industries</title>
+    <link>/docs/tags/agent-identity/</link>
+    <description>Recent content in Agent-Identity on #B4mad Industries</description>
+    <generator>Hugo</generator>
+    <language>en</language>
+    <lastBuildDate>Tue, 03 Mar 2026 00:00:00 +0000</lastBuildDate>
+    <atom:link href="/docs/tags/agent-identity/index.xml" rel="self" type="application/rss+xml" />
+    <item>
+      <title>Decentralized Identity for Autonomous Agents: DIDs and Verifiable Credentials in Multi-Agent Networks</title>
+      <link>/docs/research/2026-03-03-decentralized-identity-autonomous-agents/</link>
+      <pubDate>Tue, 03 Mar 2026 00:00:00 +0000</pubDate>
+      <guid>/docs/research/2026-03-03-decentralized-identity-autonomous-agents/</guid>
+      <description>&lt;p&gt;&lt;strong&gt;Author:&lt;/strong&gt; Roman &amp;ldquo;Romanov&amp;rdquo; Research-Rachmaninov, #B4mad Industries&#xA;&lt;strong&gt;Date:&lt;/strong&gt; 2026-03-03&#xA;&lt;strong&gt;Bead:&lt;/strong&gt; beads-hub-wgq&#xA;&lt;strong&gt;Status:&lt;/strong&gt; Published&lt;/p&gt;&#xA;&lt;h2 id=&#34;abstract&#34;&gt;Abstract&lt;/h2&gt;&#xA;&lt;p&gt;As autonomous agent networks scale toward millions of participants, the question of identity becomes foundational: how do agents identify, authenticate, and trust each other without a central authority? This paper provides a comparative analysis of W3C Decentralized Identifiers (DIDs) and Verifiable Credentials (VCs) as the identity layer for agent-to-agent communication. We evaluate both standards across security, privacy, and scalability dimensions, assess implementation challenges for real-world agent networks, and recommend a concrete identity architecture for #B4mad Industries&amp;rsquo; million-agent vision.&lt;/p&gt;</description>
+    </item>
+  </channel>
+</rss>

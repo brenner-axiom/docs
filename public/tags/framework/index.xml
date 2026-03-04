@@ -1,6 +1,19 @@
-<?xml version="1.0" encoding="utf-8" standalone="yes"?><rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom"><channel><title>Framework on #B4mad Industries</title><link>/docs/tags/framework/</link><description>Recent content in Framework on #B4mad Industries</description><generator>Hugo</generator><language>en</language><lastBuildDate>Thu, 26 Feb 2026 11:03:00 +0100</lastBuildDate><atom:link href="/docs/tags/framework/index.xml" rel="self" type="application/rss+xml"/><item><title>Comparative Analysis of Bead-Based Collaboration Frameworks</title><link>/docs/research/comparative-analysis-beads-frameworks/</link><pubDate>Thu, 26 Feb 2026 11:03:00 +0100</pubDate><guid>/docs/research/comparative-analysis-beads-frameworks/</guid><description>&lt;h1 id="bead-based-agent-collaboration-a-lightweight-framework-for-the-b4mad-network">Bead-Based Agent Collaboration: A Lightweight Framework for the #B4mad Network&lt;/h1>
-&lt;p>&lt;strong>Author:&lt;/strong> Roman &amp;ldquo;Romanov&amp;rdquo; Research-Rachmaninov&lt;br>
-&lt;strong>Date:&lt;/strong> 2026-02-20&lt;br>
-&lt;strong>Bead:&lt;/strong> beads-hub-514&lt;/p>
-&lt;h2 id="abstract">Abstract&lt;/h2>
-&lt;p>Multi-agent systems need coordination primitives. Complex frameworks like Gas Town (steveyegge/gastown) and Agent Flywheel offer rich orchestration but carry significant conceptual overhead. This paper proposes a minimal collaboration framework for #B4mad&amp;rsquo;s agent network built entirely on the existing beads issue tracker and git-backed conventions. We define five core primitives—&lt;strong>dispatch&lt;/strong>, &lt;strong>claim&lt;/strong>, &lt;strong>handoff&lt;/strong>, &lt;strong>block&lt;/strong>, and &lt;strong>report&lt;/strong>—and show how they compose into patterns sufficient for our current and near-future needs without introducing new infrastructure.&lt;/p></description></item></channel></rss>
+<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+  <channel>
+    <title>Framework on #B4mad Industries</title>
+    <link>/docs/tags/framework/</link>
+    <description>Recent content in Framework on #B4mad Industries</description>
+    <generator>Hugo</generator>
+    <language>en</language>
+    <lastBuildDate>Thu, 26 Feb 2026 11:03:00 +0100</lastBuildDate>
+    <atom:link href="/docs/tags/framework/index.xml" rel="self" type="application/rss+xml" />
+    <item>
+      <title>Comparative Analysis of Bead-Based Collaboration Frameworks</title>
+      <link>/docs/research/comparative-analysis-beads-frameworks/</link>
+      <pubDate>Thu, 26 Feb 2026 11:03:00 +0100</pubDate>
+      <guid>/docs/research/comparative-analysis-beads-frameworks/</guid>
+      <description>&lt;h1 id=&#34;bead-based-agent-collaboration-a-lightweight-framework-for-the-b4mad-network&#34;&gt;Bead-Based Agent Collaboration: A Lightweight Framework for the #B4mad Network&lt;/h1&gt;&#xA;&lt;p&gt;&lt;strong&gt;Author:&lt;/strong&gt; Roman &amp;ldquo;Romanov&amp;rdquo; Research-Rachmaninov&lt;br&gt;&#xA;&lt;strong&gt;Date:&lt;/strong&gt; 2026-02-20&lt;br&gt;&#xA;&lt;strong&gt;Bead:&lt;/strong&gt; beads-hub-514&lt;/p&gt;&#xA;&lt;h2 id=&#34;abstract&#34;&gt;Abstract&lt;/h2&gt;&#xA;&lt;p&gt;Multi-agent systems need coordination primitives. Complex frameworks like Gas Town (steveyegge/gastown) and Agent Flywheel offer rich orchestration but carry significant conceptual overhead. This paper proposes a minimal collaboration framework for #B4mad&amp;rsquo;s agent network built entirely on the existing beads issue tracker and git-backed conventions. We define five core primitives—&lt;strong&gt;dispatch&lt;/strong&gt;, &lt;strong&gt;claim&lt;/strong&gt;, &lt;strong&gt;handoff&lt;/strong&gt;, &lt;strong&gt;block&lt;/strong&gt;, and &lt;strong&gt;report&lt;/strong&gt;—and show how they compose into patterns sufficient for our current and near-future needs without introducing new infrastructure.&lt;/p&gt;</description>
+    </item>
+  </channel>
+</rss>
